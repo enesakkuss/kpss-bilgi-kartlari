@@ -725,9 +725,6 @@ class FlashcardApp {
 
         if (!selectEl) return;
 
-        // Mod bazlı filtreleme:
-        // Eğer Çoktan Seçmeli Test ise SADECE Test desteleri (Tarih Çıkmış Sorular & Vatandaşlık Çıkmış Sorular)
-        // Eğer 3D Kart / Eşleştirme / Yönetim ise SADECE 5 Bilgi Kartı destesi
         let filteredDecks = [];
         if (this.activeMode === 'multiplechoice') {
             filteredDecks = allDecks.filter(d => d.isTestDeck || d.category === 'Çıkmış Test' || d.id.includes('cikmis'));
@@ -904,7 +901,7 @@ document.addEventListener('DOMContentLoaded', () => {
 """
 
 # Version string for automatic cache-busting
-APP_VERSION = "9.0_tarih_cikmis_sorular_173_soru_added"
+APP_VERSION = "10.0_exact_118_tarih_cikmis_sorular"
 
 # Storage JS with guaranteed auto-recovery AND automatic version-busting
 storage_js = f"""
@@ -919,7 +916,7 @@ class DeckStorage {{
         try {{
             const savedVersion = localStorage.getItem(VERSION_KEY);
             if (savedVersion !== CURRENT_VERSION) {{
-                console.log('Yeni versiyon algılandı, yerel veriler 1240 kartlık güncel sürüme yükseltiliyor...');
+                console.log('Yeni versiyon algılandı, yerel veriler 1185 içerikli güncel sürüme yükseltiliyor...');
                 localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
                 if (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {{
                     this.saveDecks(SAMPLE_DECKS);
@@ -1074,7 +1071,17 @@ def load_test_cards(csv_file_name, prefix):
             reader = csv.reader(f)
             header = next(reader, None)
             for idx, row in enumerate(reader, 1):
-                if len(row) >= 7:
+                # 8-column format: ["No", "Soru", "A", "B", "C", "D", "E", "Cevap"]
+                if len(row) >= 8:
+                    question = row[1].strip()
+                    optA = row[2].strip()
+                    optB = row[3].strip()
+                    optC = row[4].strip()
+                    optD = row[5].strip()
+                    optE = row[6].strip()
+                    answerLetter = row[7].strip().upper()
+                # 7-column format: ["Soru", "A", "B", "C", "D", "E", "Cevap"]
+                elif len(row) >= 7:
                     question = row[0].strip()
                     optA = row[1].strip()
                     optB = row[2].strip()
@@ -1082,24 +1089,26 @@ def load_test_cards(csv_file_name, prefix):
                     optD = row[4].strip()
                     optE = row[5].strip()
                     answerLetter = row[6].strip().upper()
+                else:
+                    continue
 
-                    optionsMap = { 'A': optA, 'B': optB, 'C': optC, 'D': optD, 'E': optE }
-                    correctText = optionsMap.get(answerLetter, optA)
+                optionsMap = { 'A': optA, 'B': optB, 'C': optC, 'D': optD, 'E': optE }
+                correctText = optionsMap.get(answerLetter, optA)
 
-                    cards.append({
-                        "id": f"c_{prefix}_{idx}",
-                        "front": question,
-                        "back": f"Doğru Cevap: {answerLetter}) {correctText}",
-                        "correctOption": answerLetter,
-                        "options": [
-                            { "letter": "A", "text": optA },
-                            { "letter": "B", "text": optB },
-                            { "letter": "C", "text": optC },
-                            { "letter": "D", "text": optD },
-                            { "letter": "E", "text": optE }
-                        ],
-                        "mastered": False
-                    })
+                cards.append({
+                    "id": f"c_{prefix}_{idx}",
+                    "front": question,
+                    "back": f"Doğru Cevap: {answerLetter}) {correctText}",
+                    "correctOption": answerLetter,
+                    "options": [
+                        { "letter": "A", "text": optA },
+                        { "letter": "B", "text": optB },
+                        { "letter": "C", "text": optC },
+                        { "letter": "D", "text": optD },
+                        { "letter": "E", "text": optE }
+                    ],
+                    "mastered": False
+                })
     return cards
 
 tarih_cikmis_cards = load_test_cards("tarih_cikmis_sorular.csv", "tarihcikmis")
@@ -1113,7 +1122,7 @@ files_map = [
     {
         "id": "deck-tarih-cikmis",
         "title": "Tarih Çıkmış Sorular",
-        "description": "173 Adet ÖSYM Tarih Çıkmış Çoktan Seçmeli Test Sorusu (5 Şıklı)",
+        "description": "118 Adet ÖSYM Tarih Çıkmış Çoktan Seçmeli Test Sorusu (1-118 Arası Tam Liste)",
         "category": "Çıkmış Test",
         "isTestDeck": True,
         "cards": tarih_cikmis_cards
@@ -1217,7 +1226,7 @@ standalone_html = f"""<!DOCTYPE html>
             <div class="logo-area">
                 <span class="logo-icon">🎴</span>
                 <h1>KPSS Bilgi Kartları & Test Platformu</h1>
-                <span class="badge-tag">v9.0</span>
+                <span class="badge-tag">v10.0</span>
             </div>
             <div class="header-actions">
                 <button class="ctrl-btn secondary-btn" style="font-size: 0.85rem;" onclick="DeckStorage.forceResetDecks();">
@@ -1260,7 +1269,7 @@ standalone_html = f"""<!DOCTYPE html>
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>KPSS Bilgi Kartları • v9.0 Tarih & Vatandaşlık Çıkmış Sorular Dahil (1240 İçerik)</p>
+            <p>KPSS Bilgi Kartları • v10.0 Tarih (118 Soru) & Vatandaşlık (75 Soru) Dahil (1185 İçerik)</p>
         </footer>
     </div>
 
@@ -1294,4 +1303,4 @@ standalone_path = os.path.join(base_dir, "index.html")
 with open(standalone_path, "w", encoding="utf-8") as f:
     f.write(standalone_html)
 
-print("index.html TARİH ÇIKMIŞ SORULAR (173 SORU) İLE BAŞARIYLA GÜNCELLENDİ!")
+print("index.html BİREBİR 118 SORULUK GÜNCEL TARİH ÇIKMIŞ LİSTESİ İLE RE-BUNDLE EDİLDİ!")
