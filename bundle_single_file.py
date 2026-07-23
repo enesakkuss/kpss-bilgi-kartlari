@@ -707,7 +707,7 @@ app_js = """
 class FlashcardApp {
     constructor() {
         this.activeMode = 'multiplechoice';
-        this.activeDeckId = 'deck-vatandaslik-cikmis';
+        this.activeDeckId = 'deck-tarih-cikmis';
         this.activeModeInstance = null;
 
         this.init();
@@ -726,16 +726,16 @@ class FlashcardApp {
         if (!selectEl) return;
 
         // Mod bazlı filtreleme:
-        // Eğer Çoktan Seçmeli Test ise SADECE Test desteleri (Vatandaşlık Çıkmış Sorular)
-        // Eğer 3D Kart / Eşleştirme / Yönetim ise SADECE Bilgi Kartları desteleri
+        // Eğer Çoktan Seçmeli Test ise SADECE Test desteleri (Tarih Çıkmış Sorular & Vatandaşlık Çıkmış Sorular)
+        // Eğer 3D Kart / Eşleştirme / Yönetim ise SADECE 5 Bilgi Kartı destesi
         let filteredDecks = [];
         if (this.activeMode === 'multiplechoice') {
-            filteredDecks = allDecks.filter(d => d.id === 'deck-vatandaslik-cikmis' || d.category === 'Vatandaşlık Çıkmış');
+            filteredDecks = allDecks.filter(d => d.isTestDeck || d.category === 'Çıkmış Test' || d.id.includes('cikmis'));
             if (!filteredDecks.some(d => d.id === this.activeDeckId)) {
-                this.activeDeckId = filteredDecks[0] ? filteredDecks[0].id : 'deck-vatandaslik-cikmis';
+                this.activeDeckId = filteredDecks[0] ? filteredDecks[0].id : 'deck-tarih-cikmis';
             }
         } else {
-            filteredDecks = allDecks.filter(d => d.id !== 'deck-vatandaslik-cikmis' && d.category !== 'Vatandaşlık Çıkmış');
+            filteredDecks = allDecks.filter(d => !d.isTestDeck && d.category !== 'Çıkmış Test' && !d.id.includes('cikmis'));
             if (!filteredDecks.some(d => d.id === this.activeDeckId)) {
                 this.activeDeckId = filteredDecks[0] ? filteredDecks[0].id : 'deck-karma';
             }
@@ -904,7 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
 """
 
 # Version string for automatic cache-busting
-APP_VERSION = "8.0_vatandaslik_cikmis_sorular_75_soru_layout_fixed"
+APP_VERSION = "9.0_tarih_cikmis_sorular_173_soru_added"
 
 # Storage JS with guaranteed auto-recovery AND automatic version-busting
 storage_js = f"""
@@ -919,7 +919,7 @@ class DeckStorage {{
         try {{
             const savedVersion = localStorage.getItem(VERSION_KEY);
             if (savedVersion !== CURRENT_VERSION) {{
-                console.log('Yeni versiyon algılandı, yerel veriler 1067 kartlık güncel sürüme yükseltiliyor...');
+                console.log('Yeni versiyon algılandı, yerel veriler 1240 kartlık güncel sürüme yükseltiliyor...');
                 localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
                 if (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {{
                     this.saveDecks(SAMPLE_DECKS);
@@ -963,7 +963,7 @@ class DeckStorage {{
                 }});
             }}
 
-            if (needsReset || (savedDecks.length < 6 && typeof SAMPLE_DECKS !== 'undefined')) {{
+            if (needsReset || (savedDecks.length < 7 && typeof SAMPLE_DECKS !== 'undefined')) {{
                 savedDecks = (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) ? SAMPLE_DECKS : [];
                 this.saveDecks(savedDecks);
                 return savedDecks;
@@ -1065,87 +1065,101 @@ class DeckStorage {{
 }}
 """
 
-# Parse Vatandaşlık Çıkmış Sorular (75 Soru)
-vatandaslik_cikmis_file = os.path.join(base_dir, "vatandaslik_cikmis_sorular.csv")
-cikmis_cards = []
+# Helper function to load test cards from CSV
+def load_test_cards(csv_file_name, prefix):
+    file_path = os.path.join(base_dir, csv_file_name)
+    cards = []
+    if os.path.exists(file_path):
+        with open(file_path, mode="r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            header = next(reader, None)
+            for idx, row in enumerate(reader, 1):
+                if len(row) >= 7:
+                    question = row[0].strip()
+                    optA = row[1].strip()
+                    optB = row[2].strip()
+                    optC = row[3].strip()
+                    optD = row[4].strip()
+                    optE = row[5].strip()
+                    answerLetter = row[6].strip().upper()
 
-if os.path.exists(vatandaslik_cikmis_file):
-    with open(vatandaslik_cikmis_file, mode="r", encoding="utf-8") as f:
-        reader = csv.reader(f)
-        header = next(reader, None)
-        for idx, row in enumerate(reader, 1):
-            if len(row) >= 7:
-                question = row[0].strip()
-                optA = row[1].strip()
-                optB = row[2].strip()
-                optC = row[3].strip()
-                optD = row[4].strip()
-                optE = row[5].strip()
-                answerLetter = row[6].strip().upper()
+                    optionsMap = { 'A': optA, 'B': optB, 'C': optC, 'D': optD, 'E': optE }
+                    correctText = optionsMap.get(answerLetter, optA)
 
-                optionsMap = { 'A': optA, 'B': optB, 'C': optC, 'D': optD, 'E': optE }
-                correctText = optionsMap.get(answerLetter, optA)
+                    cards.append({
+                        "id": f"c_{prefix}_{idx}",
+                        "front": question,
+                        "back": f"Doğru Cevap: {answerLetter}) {correctText}",
+                        "correctOption": answerLetter,
+                        "options": [
+                            { "letter": "A", "text": optA },
+                            { "letter": "B", "text": optB },
+                            { "letter": "C", "text": optC },
+                            { "letter": "D", "text": optD },
+                            { "letter": "E", "text": optE }
+                        ],
+                        "mastered": False
+                    })
+    return cards
 
-                cikmis_cards.append({
-                    "id": f"c_cikmis_{idx}",
-                    "front": question,
-                    "back": f"Doğru Cevap: {answerLetter}) {correctText}",
-                    "correctOption": answerLetter,
-                    "options": [
-                        { "letter": "A", "text": optA },
-                        { "letter": "B", "text": optB },
-                        { "letter": "C", "text": optC },
-                        { "letter": "D", "text": optD },
-                        { "letter": "E", "text": optE }
-                    ],
-                    "mastered": False
-                })
+tarih_cikmis_cards = load_test_cards("tarih_cikmis_sorular.csv", "tarihcikmis")
+vatandaslik_cikmis_cards = load_test_cards("vatandaslik_cikmis_sorular.csv", "vatandaslikcikmis")
 
-print(f"Vatandaşlık Çıkmış Sorular: {len(cikmis_cards)} soru yüklendi.")
+print(f"Tarih Çıkmış Sorular: {len(tarih_cikmis_cards)} soru yüklendi.")
+print(f"Vatandaşlık Çıkmış Sorular: {len(vatandaslik_cikmis_cards)} soru yüklendi.")
 
 # Read standard 5 CSV files and build sample decks
 files_map = [
     {
+        "id": "deck-tarih-cikmis",
+        "title": "Tarih Çıkmış Sorular",
+        "description": "173 Adet ÖSYM Tarih Çıkmış Çoktan Seçmeli Test Sorusu (5 Şıklı)",
+        "category": "Çıkmış Test",
+        "isTestDeck": True,
+        "cards": tarih_cikmis_cards
+    },
+    {
         "id": "deck-vatandaslik-cikmis",
         "title": "Vatandaşlık Çıkmış Sorular",
         "description": "75 Adet ÖSYM Vatandaşlık Çıkmış Çoktan Seçmeli Test Sorusu (5 Şıklı)",
-        "category": "Vatandaşlık Çıkmış",
-        "cards": cikmis_cards
+        "category": "Çıkmış Test",
+        "isTestDeck": True,
+        "cards": vatandaslik_cikmis_cards
     },
     {
         "id": "deck-karma",
         "title": "Karma",
         "description": "195 Adet Genel Karma Türkçe, Tarih, Coğrafya ve Vatandaşlık Bilgi Kartları",
         "category": "Karma",
-        "file": "karma_bilgi_kartlari.csv"
+        "cards_file": "karma_bilgi_kartlari.csv"
     },
     {
         "id": "deck-tarih",
         "title": "Tarih",
         "description": "291 Adet İslamiyet Öncesi, Türk-İslam, Osmanlı ve İnkılap Tarihi Bilgi Kartları",
         "category": "Tarih",
-        "file": "tarih_bilgi_kartlari.csv"
+        "cards_file": "tarih_bilgi_kartlari.csv"
     },
     {
         "id": "deck-cografya",
         "title": "Coğrafya",
         "description": "196 Adet Türkiye Konumu, İklim, Nüfus, Madenler ve Fiziki Coğrafya Kartları",
         "category": "Coğrafya",
-        "file": "cografya_bilgi_kartlari.csv"
+        "cards_file": "cografya_bilgi_kartlari.csv"
     },
     {
         "id": "deck-turkce",
         "title": "Türkçe",
         "description": "175 Adet Anlam Bilgisi, Ses Bilgisi, Yazım Kuralları ve Dil Bilgisi Kartları",
         "category": "Türkçe",
-        "file": "turkce_anlam_bilgisi.csv"
+        "cards_file": "turkce_anlam_bilgisi.csv"
     },
     {
         "id": "deck-vatandaslik",
         "title": "Vatandaşlık",
         "description": "135 Adet Anayasa Hukuku, Haklar, Yargı Organları ve İdare Hukuku Kartları",
         "category": "Vatandaşlık",
-        "file": "vatandaslik_bilgi_kartlari.csv"
+        "cards_file": "vatandaslik_bilgi_kartlari.csv"
     }
 ]
 
@@ -1154,7 +1168,7 @@ for item in files_map:
     if "cards" in item:
         cards = item["cards"]
     else:
-        file_path = os.path.join(base_dir, item["file"])
+        file_path = os.path.join(base_dir, item["cards_file"])
         cards = []
         if os.path.exists(file_path):
             with open(file_path, mode="r", encoding="utf-8") as f:
@@ -1178,6 +1192,7 @@ for item in files_map:
         "title": item["title"],
         "description": item["description"],
         "category": item["category"],
+        "isTestDeck": item.get("isTestDeck", False),
         "createdAt": "2026-07-23T12:00:00.000Z",
         "cards": cards
     })
@@ -1202,7 +1217,7 @@ standalone_html = f"""<!DOCTYPE html>
             <div class="logo-area">
                 <span class="logo-icon">🎴</span>
                 <h1>KPSS Bilgi Kartları & Test Platformu</h1>
-                <span class="badge-tag">v8.0</span>
+                <span class="badge-tag">v9.0</span>
             </div>
             <div class="header-actions">
                 <button class="ctrl-btn secondary-btn" style="font-size: 0.85rem;" onclick="DeckStorage.forceResetDecks();">
@@ -1211,7 +1226,7 @@ standalone_html = f"""<!DOCTYPE html>
             </div>
         </header>
 
-        <!-- Öğrenme Modu Sekmeleri (ÜSTE ALINDI) -->
+        <!-- Öğrenme Modu Sekmeleri -->
         <nav class="mode-tabs" style="margin-bottom: 1rem;">
             <button class="tab-btn active" data-mode="multiplechoice">
                 <span>📝</span> Çoktan Seçmeli Test
@@ -1227,7 +1242,7 @@ standalone_html = f"""<!DOCTYPE html>
             </button>
         </nav>
 
-        <!-- Deste Seçimi Barı (SADELEŞTİRİLDİ & DİNAMİK FİLTRELİ) -->
+        <!-- Deste Seçimi Barı -->
         <section class="deck-selector-bar" style="margin-bottom: 1.5rem;">
             <div class="deck-select-group" style="width: 100%;">
                 <label for="deckSelect">AKTİF ÇALIŞMA DESTESİ</label>
@@ -1245,7 +1260,7 @@ standalone_html = f"""<!DOCTYPE html>
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>KPSS Bilgi Kartları • v8.0 Vatandaşlık Çıkmış Sorular Dahil (1067 İçerik)</p>
+            <p>KPSS Bilgi Kartları • v9.0 Tarih & Vatandaşlık Çıkmış Sorular Dahil (1240 İçerik)</p>
         </footer>
     </div>
 
@@ -1279,4 +1294,4 @@ standalone_path = os.path.join(base_dir, "index.html")
 with open(standalone_path, "w", encoding="utf-8") as f:
     f.write(standalone_html)
 
-print("index.html 75 SORULUK GÜNCEL LİSTE & YENİ TASARIM İLE BAŞARIYLA BUNDLE EDİLDİ!")
+print("index.html TARİH ÇIKMIŞ SORULAR (173 SORU) İLE BAŞARIYLA GÜNCELLENDİ!")
