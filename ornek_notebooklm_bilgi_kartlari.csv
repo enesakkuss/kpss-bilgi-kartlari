@@ -1,0 +1,8 @@
+Soru/Kavram,Cevap/Açıklama
+"Large Language Model (LLM) nedir?","Devasa miktarda metin verisi üzerinde eğitilmiş, doğal dili anlama ve üretme yeteneğine sahip yapay zeka modelleridir."
+"Overfitting (Aşırı Uyum) ne anlama gelir?","Modelin eğitim verisini ezberleyip yeni verilerde başarısız olması durumudur."
+"Transformer Mimarisi nedir?","Self-Attention (Öz-Dikkat) mekanizmasıyla verileri paralel işleyen nöral ağ mimarisi."
+"RAG (Retrieval-Augmented Generation) nedir?","LLM modellerinin harici bilgi tabanından veri çekerek daha doğru yanıt üretmesini sağlayan teknik."
+"Fine-Tuning (İnce Ayar) süreci nasıl çalışır?","Önceden eğitilmiş genel bir yapay zeka modelinin özel bir veri setiyle yeniden eğitilmesidir."
+"Mitokondri organelinin görevi nedir?","Hücrenin santralidir; hücresel solunum yoluyla ATP üretilmesini sağlar."
+"CRISPR-Cas9 teknolojisi nedir?","Genom üzerinde istenilen bölgedeki DNA dizilimini kesip düzenlemeye olanak tanıyan gen düzenleme aracı."
