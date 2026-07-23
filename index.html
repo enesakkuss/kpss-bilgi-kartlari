@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NotebookLM Bilgi Kartları - İnteraktif Öğrenme Platformu</title>
-    <meta name="description" content="NotebookLM özet ve bilgi kartlarınızı kolayca yükleyip 3D kartlar, Doğru/Yanlış testleri ve eşleştirme oyunlarıyla çalışabileceğiniz modern web platformu.">
+    <meta name="description" content="NotebookLM özet ve bilgi kartlarınızı kolayca yükleyip 3D kartlar, Çoktan Seçmeli Testler ve eşleştirme oyunlarıyla çalışabileceğiniz modern web platformu.">
     <style>
 /* ==========================================================================
    NotebookLM Flashcards - Design System & CSS
@@ -927,18 +927,18 @@ body {
 
 
 /* ==========================================================================
-   TRUE / FALSE MODE STYLES
+   MULTIPLE CHOICE QUIZ MODE STYLES
    ========================================================================== */
 
-.tf-mode-wrapper {
+.mc-mode-wrapper {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    max-width: 750px;
+    max-width: 820px;
     margin: 0 auto;
 }
 
-.tf-header-bar {
+.mc-header-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -948,17 +948,17 @@ body {
     border: 1px solid var(--glass-border);
 }
 
-.tf-score-badge {
+.mc-score-badge {
     display: flex;
     gap: 1.5rem;
     font-weight: 600;
 }
 
-.tf-card-box {
+.mc-card-box {
     background: var(--bg-card);
     backdrop-filter: blur(12px);
     border: 2px solid var(--glass-border);
-    padding: 2rem;
+    padding: 2.25rem 2rem;
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -966,107 +966,106 @@ body {
     transition: all 0.3s ease;
 }
 
-.tf-card-box.correct-border {
+.mc-card-box.correct-border {
     border-color: var(--emerald-accent);
     box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
 }
 
-.tf-card-box.wrong-border {
+.mc-card-box.wrong-border {
     border-color: var(--rose-accent);
     box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);
 }
 
-.tf-question-title {
-    font-size: 1.3rem;
+.mc-question-text {
+    font-size: 1.25rem;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 1.6;
     color: #ffffff;
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: 1rem;
 }
 
-.tf-proposed-answer-box {
+.mc-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.mc-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     background: rgba(15, 23, 42, 0.6);
-    border: 1px solid var(--glass-border);
-    padding: 1.25rem;
+    border: 2px solid var(--glass-border);
+    padding: 1rem 1.25rem;
     border-radius: var(--radius-md);
-}
-
-.tf-label {
-    font-size: 0.85rem;
-    color: var(--cyan-accent);
+    color: #ffffff;
+    font-size: 1.05rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.tf-proposed-text {
-    font-size: 1.15rem;
-    margin-top: 0.5rem;
-    color: var(--text-main);
+.mc-option-btn:hover:not(:disabled) {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: var(--cyan-accent);
+    transform: translateX(4px);
+}
+
+.mc-option-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: var(--cyan-accent);
+    flex-shrink: 0;
+}
+
+.mc-option-btn.selected-correct {
+    background: rgba(16, 185, 129, 0.25) !important;
+    border-color: var(--emerald-accent) !important;
+    color: #6ee7b7 !important;
+}
+
+.mc-option-btn.selected-correct .mc-option-badge {
+    background: var(--emerald-accent);
+    color: #0f172a;
+}
+
+.mc-option-btn.selected-wrong {
+    background: rgba(244, 63, 94, 0.25) !important;
+    border-color: var(--rose-accent) !important;
+    color: #fca5a5 !important;
+}
+
+.mc-option-btn.selected-wrong .mc-option-badge {
+    background: var(--rose-accent);
+    color: #ffffff;
+}
+
+.mc-feedback-msg {
+    padding: 1.2rem;
+    border-radius: var(--radius-md);
+    font-size: 1.1rem;
     line-height: 1.5;
 }
 
-.tf-feedback-msg {
-    padding: 1rem;
-    border-radius: var(--radius-md);
-    font-size: 1.05rem;
-    line-height: 1.4;
-}
-
-.tf-feedback-msg.success {
+.mc-feedback-msg.success {
     background: rgba(16, 185, 129, 0.2);
     border: 1px solid var(--emerald-accent);
     color: #6ee7b7;
 }
 
-.tf-feedback-msg.error {
+.mc-feedback-msg.error {
     background: rgba(244, 63, 94, 0.2);
     border: 1px solid var(--rose-accent);
     color: #fca5a5;
-}
-
-.tf-action-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    transition: opacity 0.2s ease;
-}
-
-.tf-btn {
-    font-family: var(--font-heading);
-    font-size: 1.3rem;
-    font-weight: 700;
-    padding: 1.2rem;
-    border-radius: var(--radius-md);
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: #ffffff;
-}
-
-.tf-btn.true-btn {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-}
-
-.tf-btn.true-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(16, 185, 129, 0.5);
-}
-
-.tf-btn.false-btn {
-    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-    box-shadow: 0 8px 20px rgba(244, 63, 94, 0.3);
-}
-
-.tf-btn.false-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(244, 63, 94, 0.5);
 }
 
     </style>
@@ -1077,45 +1076,23 @@ body {
         <header class="app-header">
             <div class="logo-area">
                 <span class="logo-icon">🎴</span>
-                <h1>NotebookLM Kartları</h1>
-                <span class="badge-tag">v3.0 (Doğru/Yanlış Modlu)</span>
+                <h1>KPSS Bilgi Kartları & Test Platformu</h1>
+                <span class="badge-tag">v8.0</span>
             </div>
             <div class="header-actions">
-                <button class="ctrl-btn secondary-btn" style="margin-right: 12px; font-size: 0.85rem;" onclick="DeckStorage.forceResetDecks();">
-                    🔄 Desteleri Güncelle
+                <button class="ctrl-btn secondary-btn" style="font-size: 0.85rem;" onclick="DeckStorage.forceResetDecks();">
+                    🔄 Verileri Güncelle
                 </button>
-                <div class="global-stats" id="globalStatsDisplay">
-                    🔥 Toplam Çalışılan: <strong>0</strong> | Öğrenilen: <strong>0</strong>
-                </div>
             </div>
         </header>
 
-        <!-- Deste Seçimi & İçe Aktarma Barı -->
-        <section class="deck-selector-bar">
-            <div class="deck-select-group">
-                <label for="deckSelect">Aktif Çalışma Destesi</label>
-                <select id="deckSelect" class="custom-select">
-                    <!-- JavaScript ile dinamik dolacak -->
-                </select>
-                <div class="deck-desc-text" id="deckDesc">Deste açıklaması burada görünecek...</div>
-            </div>
-            <div class="btn-group">
-                <button class="ctrl-btn primary-btn" id="openUploadModalBtn">
-                    ✨ + NotebookLM Kart Yükle
-                </button>
-                <button class="ctrl-btn secondary-btn" id="newDeckBtn">
-                    📁 Yeni Deste
-                </button>
-            </div>
-        </section>
-
-        <!-- Öğrenme Modu Sekmeleri -->
-        <nav class="mode-tabs">
-            <button class="tab-btn active" data-mode="flashcard">
-                <span>🎴</span> 3D Kart Modu
+        <!-- Öğrenme Modu Sekmeleri (ÜSTE ALINDI) -->
+        <nav class="mode-tabs" style="margin-bottom: 1rem;">
+            <button class="tab-btn active" data-mode="multiplechoice">
+                <span>📝</span> Çoktan Seçmeli Test
             </button>
-            <button class="tab-btn" data-mode="truefalse">
-                <span>⚡</span> Doğru / Yanlış
+            <button class="tab-btn" data-mode="flashcard">
+                <span>🎴</span> 3D Kart Modu
             </button>
             <button class="tab-btn" data-mode="match">
                 <span>🧩</span> Eşleştirme Oyunu
@@ -1125,6 +1102,17 @@ body {
             </button>
         </nav>
 
+        <!-- Deste Seçimi Barı (SADELEŞTİRİLDİ & DİNAMİK FİLTRELİ) -->
+        <section class="deck-selector-bar" style="margin-bottom: 1.5rem;">
+            <div class="deck-select-group" style="width: 100%;">
+                <label for="deckSelect">AKTİF ÇALIŞMA DESTESİ</label>
+                <select id="deckSelect" class="custom-select">
+                    <!-- JavaScript ile mod tipine göre dinamik dolacak -->
+                </select>
+                <div class="deck-desc-text" id="deckDesc">Deste açıklaması burada görünecek...</div>
+            </div>
+        </section>
+
         <!-- Ana Mod Alanı -->
         <main class="mode-stage" id="modeContainer">
             <!-- İlgili mod JS tarafından buraya yüklenecektir -->
@@ -1132,47 +1120,2197 @@ body {
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>NotebookLM Bilgi Kartı Platformu • v3.0 Doğru/Yanlış Modlu (992 Kart)</p>
+            <p>KPSS Bilgi Kartları • v8.0 Vatandaşlık Çıkmış Sorular Dahil (1067 İçerik)</p>
         </footer>
-    </div>
-
-    <!-- NotebookLM Kart Yükleme Modalı -->
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3>NotebookLM Kart / Metin Yükle</h3>
-                <button class="close-modal-btn" id="closeUploadModalBtn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="importDeckTitle">Deste Başlığı</label>
-                    <input type="text" id="importDeckTitle" class="text-input" placeholder="Örn: Yapay Zeka Notları, Tarih Sınavı...">
-                </div>
-
-                <div class="form-group">
-                    <label for="importTextarea">Metin Yapıştır (Soru/Cevap, Tablo, Q/A veya Liste Biçimi)</label>
-                    <textarea id="importTextarea" class="textarea-input" placeholder="NotebookLM'den kopyaladığınız metni buraya yapıştırın. Örnek biçimler:&#10;Soru: LLM nedir?&#10;Cevap: Devasa dil modelleridir.&#10;&#10;Veya:&#10;Kavram - Açıklama&#10;| Soru | Cevap |"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Veya Dosya Yükleyin (.json, .csv, .txt, .md)</label>
-                    <div class="file-drop-zone" onclick="document.getElementById('fileInput').click();">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
-                        <p>Dosyayı buraya sürükleyin veya <strong>Bilgisayardan Seçin</strong></p>
-                        <input type="file" id="fileInput" accept=".json,.csv,.txt,.md" style="display: none;">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="ctrl-btn secondary-btn" onclick="document.getElementById('uploadModal').classList.remove('active');">İptal</button>
-                <button class="ctrl-btn primary-btn" id="processImportBtn">🚀 Kartları İçe Aktar</button>
-            </div>
-        </div>
     </div>
 
     <!-- Örnek Kartlar ve Tüm Mantık Tam Bağımsız Entegre Edilir -->
     <script>
         const SAMPLE_DECKS = [
+    {
+        "id": "deck-vatandaslik-cikmis",
+        "title": "Vatandaşlık Çıkmış Sorular",
+        "description": "75 Adet ÖSYM Vatandaşlık Çıkmış Çoktan Seçmeli Test Sorusu (5 Şıklı)",
+        "category": "Vatandaşlık Çıkmış",
+        "createdAt": "2026-07-23T12:00:00.000Z",
+        "cards": [
+            {
+                "id": "c_cikmis_1",
+                "front": "4721 sayılı Türk Medeni Kanunu'na göre erginlik; I. 18 yaşın doldurulması, II. evlenme, III. kişinin isteği ve velisinin rızası hâllerinin hangilerinde mahkeme kararına ihtiyaç duymaksızın kural olarak doğrudan kazanılır?",
+                "back": "Doğru Cevap: C) I ve II",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Yalnız III"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve II"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "II ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "I, II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_2",
+                "front": "Kişiye bağlı olmayan, bir hukuki işlemle veya miras yoluyla başkalarına geçebilen haklar; devredilebilen haklardır. Buna göre I. rehin, II. nafaka, III. mülkiyet haklarından hangileri devredilebilen haklardandır?",
+                "back": "Doğru Cevap: C) I ve III",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Yalnız II"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve III"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "II ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "I, II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_3",
+                "front": "Haksız fiilin aşağıdaki unsurlarından hangisini gidermek üzere tazminata hükmedilir?",
+                "back": "Doğru Cevap: C) Zarar",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Fiil"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kusur"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Zarar"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Uygun illiyet bağı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Hukuka aykırılık"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_4",
+                "front": "4721 sayılı Türk Medeni Kanunu'na göre hakkın kötüye kullanılması yasağı, aşağıdaki ilkelerden hangisi kapsamında düzenlenmiştir?",
+                "back": "Doğru Cevap: D) Dürüst davranma",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Resmî belgelerle ispat"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "İspat yükü"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Hâkimin takdir yetkisi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Dürüst davranma"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Hukukun uygulanması ve kaynakları"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_5",
+                "front": "Müteselsil borçlulardan birinin feragat etmiş olması, diğerlerine karşı ileri sürülemez. / Borcun ifası için bir ayın başlangıcı veya sonu belirlenmişse... bundan ayın birinci ve sonuncu günü anlaşılır. / Mal değişim sözleşmesi, taraflardan birinin diğer tarafa... mülkiyetini devretmeyi üstlendiği sözleşmedir. (Sırasıyla hukuki nitelikleri nelerdir?)",
+                "back": "Doğru Cevap: A) Emredici - Yorumlayıcı - Tanımlayıcı",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Emredici - Yorumlayıcı - Tanımlayıcı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Emredici - Tanımlayıcı - Tamamlayıcı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Yorumlayıcı - Tamamlayıcı - Emredici"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Yorumlayıcı - Emredici - Tanımlayıcı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Tamamlayıcı - Yorumlayıcı - Emredici"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_6",
+                "front": "4721 sayılı Türk Medeni Kanunu'na göre hak ehliyeti, aşağıdaki koşullardan hangisinin gerçekleşmesiyle ana rahmine düşme anından başlayarak elde edilir?",
+                "back": "Doğru Cevap: D) Sağ doğmak",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Fiil ehliyetini kazanmak"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Bir yaşını tamamlamak"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Nüfus siciline kaydedilmek"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Sağ doğmak"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Ergin olmak"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_7",
+                "front": "Türk hukukuna göre, metninde herhangi bir yürürlük tarihi gösterilmeyen kanunlar ne zaman yürürlüğe girer? (Not: 2017 öncesi sorusu baz alınmıştır)",
+                "back": "Doğru Cevap: A) Resmî Gazete'de yayımlanmasını izleyen günün başlangıcından hesap edilmek üzere kırk beşinci günün sona ermesinden itibaren",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Resmî Gazete'de yayımlanmasını izleyen günün başlangıcından hesap edilmek üzere kırk beşinci günün sona ermesinden itibaren"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Resmî Gazete'de yayımlanmasını izleyen günün başlangıcından hesap edilmek üzere otuzuncu günün sona ermesinden itibaren"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "TBMM Genel Kurulunda kabul edildiği günden itibaren kırk beş gün sonra"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "TBMM Genel Kurulunda kabul edildiği günden itibaren otuz gün sonra"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Resmî Gazete'de yayımlanmasını izleyen günün başlangıcından hesap edilmek üzere altmışıncı günün dolmasından itibaren"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_8",
+                "front": "Türk hukukunda kanunlarla ilgili aşağıdakilerden hangisi yanlıştır?",
+                "back": "Doğru Cevap: A) Kanunlar, kural olarak Türkiye Büyük Millet Meclisinde kabul edildiklerinin ertesi günü yürürlüğe girer.",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Kanunlar, kural olarak Türkiye Büyük Millet Meclisinde kabul edildiklerinin ertesi günü yürürlüğe girer."
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Milletvekillerinin her biri kanun teklifinde bulunabilir."
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Kanun teklif ve tasarılarının görüşülebilmesi için Türkiye Büyük Millet Meclisi üye tam sayısının en az üçte birinin Genel Kurula katılması gerekir."
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Kanun teklif ve tasarılarının kabulü için, kural olarak Genel Kurulda toplantıya katılan milletvekillerinin salt çoğunluğu aranır."
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Kanun koyma yetkisi Türkiye Büyük Millet Meclisine aittir."
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_9",
+                "front": "Türk hukukuna göre, aşağıdakilerden hangisi olağanüstü hâl ilanının sonuçları arasında yer almaz?",
+                "back": "Doğru Cevap: E) Kolluk yetkileri askerî makamlara geçer.",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Vatandaşlar için para, mal ve çalışma yükümlülükleri getirilebilir."
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Temel hakların kullanılması kısmen veya tamamen durdurulabilir."
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Olağanüstü hâlin gerekli kıldığı konularda kanun hükmünde kararname çıkarılabilir."
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Genel mahkemelerin yargı yetkisi devam eder."
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Kolluk yetkileri askerî makamlara geçer."
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_10",
+                "front": "Aşağıdakilerden hangisi 1982 Anayasası'nda, Türk toplumunun temeli olarak gösterilmiştir?",
+                "back": "Doğru Cevap: B) Aile",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Eğitim"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Aile"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İstiklal Marşı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Cumhuriyet"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Çağdaş medeniyet"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_11",
+                "front": "2429 sayılı Ulusal Bayram ve Genel Tatiller Hakkında Kanun'a göre; I. 30 Ağustos, II. 15 Temmuz, III. 1 Mayıs günlerinden hangileri resmî bayram günüdür?",
+                "back": "Doğru Cevap: A) Yalnız I",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "I ve II"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve III"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "II ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "I, II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_12",
+                "front": "Burak'ın, paylaşımlarında 'Cumhuriyet'in Nitelikleri' başlığı altında topladığı bilgilerden biri olamaz?",
+                "back": "Doğru Cevap: D) Türkiye Cumhuriyeti kuvvetler birliğine dayalı bir devlettir.",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Türkiye Cumhuriyeti demokratik bir devlettir."
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Türkiye Cumhuriyeti insan haklarına saygılı bir devlettir."
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Türkiye Cumhuriyeti sosyal bir devlettir."
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Türkiye Cumhuriyeti kuvvetler birliğine dayalı bir devlettir."
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Türkiye Cumhuriyeti laik bir devlettir."
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_13",
+                "front": "1982 Anayasası'na göre aşağıdaki temel hak ve ödevlerden hangisi herkese değil, yalnızca Türk vatandaşlarına tanınmıştır?",
+                "back": "Doğru Cevap: A) Kamu hizmetlerine girme hakkı",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Kamu hizmetlerine girme hakkı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Vergi ödevi"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Sosyal güvenlik hakkı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Toplantı ve gösteri yürüyüşü düzenleme hakkı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Dernek kurma hürriyeti"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_14",
+                "front": "1982 Anayasası'nın temel haklar ve hürriyetler sistematiği dikkate alındığında aşağıdaki haklardan hangisi, sosyal ve ekonomik alanlarda anayasal hükmün kapsamına girmez?",
+                "back": "Doğru Cevap: C) Mülkiyet hakkı",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Sosyal güvenlik hakkı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Eğitim ve öğrenim hakkı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Mülkiyet hakkı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Konut hakkı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Çalışma hakkı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_15",
+                "front": "Siyasi parti üyeliği konusunda bilgi edinmek isteyen Demir, avukat olan arkadaşı Meryem'e bazı sorular yöneltiyor. Meryem ise bu soruların hepsine 'Hayır!' yanıtını veriyor. Meryem, aşağıdaki sorulardan hangisine verdiği yanıtta yanılmıştır?",
+                "back": "Doğru Cevap: C) Bir kamu kurumunda işçi statüsünde çalışırken siyasi parti üyesi olabilir miyim?",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Aynı anda birden fazla siyasi parti üyesi olabilir miyim?"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "19 yaşında lise son sınıf öğrencisiyken siyasi parti üyesi olabilir miyim?"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Bir kamu kurumunda işçi statüsünde çalışırken siyasi parti üyesi olabilir miyim?"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "17 yaşında üniversite öğrencisiyken siyasi parti üyesi olabilir miyim?"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Kamu hizmetlerinden yasaklıyken siyasi parti üyesi olabilir miyim?"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_16",
+                "front": "1982 Anayasası'na göre temel hak ve hürriyetlerin kullanılmasının durdurulmasıyla ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+                "back": "Doğru Cevap: B) Temel hak ve hürriyetlerin kullanılması kısmen durdurulabilir ancak tamamen durdurulamaz.",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Savaş, seferberlik veya olağanüstü hâller dışında temel hak ve hürriyetlerin kullanılmasının durdurulması mümkün değildir."
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Temel hak ve hürriyetlerin kullanılması kısmen durdurulabilir ancak tamamen durdurulamaz."
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Savaş hukukuna uygun fiiller sonucunda meydana gelen ölümler dışında kişinin yaşam hakkına dokunulamaz."
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Suçluluğu mahkeme kararıyla saptanıncaya kadar kimse suçlu sayılamaz."
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Temel hak ve hürriyetlerin kullanılması durdurulurken milletlerarası hukuktan doğan yükümlülükler ihlal edilemez."
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_17",
+                "front": "Aşağıdaki gruplardan hangisinin devlet tarafından korunacağı veya korumak için gerekli tedbirlerin alınacağı 1982 Anayasası'nda ismen belirtilmemiştir?",
+                "back": "Doğru Cevap: D) Yargı mensupları",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Sanatçılar"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Başarılı sporcular"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İşsizler"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Yargı mensupları"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Yaşlılar"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_18",
+                "front": "1982 Anayasası'na göre, aşağıdakilerden hangisi milletvekili seçilebilme şartlarından biri değildir?",
+                "back": "Doğru Cevap: D) Yükümlü olduğu askerlik hizmetini yapmış olmak",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Türk vatandaşı olmak"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kısıtlı olmamak"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Kamu hizmetlerinden yasaklı olmamak"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Yükümlü olduğu askerlik hizmetini yapmış olmak"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "On sekiz yaşını doldurmuş olmak"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_19",
+                "front": "1982 Anayasası'na göre bakanlar hakkında, görevleriyle ilgili bir suç işledikleri iddiasıyla Yüce Divana sevk kararı alma yetkisi aşağıdakilerden hangisine aittir?",
+                "back": "Doğru Cevap: B) Türkiye Büyük Millet Meclisi",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Cumhurbaşkanı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Türkiye Büyük Millet Meclisi"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Anayasa Mahkemesi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Yargıtay Cumhuriyet Başsavcılığı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Yargıtay Ceza Genel Kurulu"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_20",
+                "front": "1982 Anayasası'na göre milletlerarası antlaşmaların onaylanmasını uygun bulma görev ve yetkisi aşağıdakilerden hangisine aittir?",
+                "back": "Doğru Cevap: C) Türkiye Büyük Millet Meclisi",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Anayasa Mahkemesi"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Millî Güvenlik Kurulu"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Türkiye Büyük Millet Meclisi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Dışişleri Bakanlığı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Adalet Bakanlığı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_21",
+                "front": "1982 Anayasası'na göre savaş sebebiyle yeni seçimlerin yapılmasına imkân görülmediği takdirde seçimlerin bir yıl geriye bırakılmasına, aşağıdakilerin hangisi tarafından karar verilir?",
+                "back": "Doğru Cevap: E) Türkiye Büyük Millet Meclisi",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yüksek Seçim Kurulu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "İçişleri Bakanlığı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Cumhurbaşkanı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Millî Güvenlik Kurulu"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Türkiye Büyük Millet Meclisi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_22",
+                "front": "Aşağıdakilerin hangisi Türkiye Büyük Millet Meclisi komisyonlarından biri değildir?",
+                "back": "Doğru Cevap: A) Maliye Komisyonu",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Maliye Komisyonu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Çevre Komisyonu"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Anayasa Komisyonu"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Adalet Komisyonu"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Dışişleri Komisyonu"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_23",
+                "front": "Türkiye Büyük Millet Meclisi Başkanlığına bağlı olarak kurulan ve idarenin işleyişiyle ilgili şikâyetleri inceleyip önerilerde bulunmakla görevli merci, aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: B) Kamu Denetçiliği Kurumu",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Devlet Denetleme Kurulu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kamu Denetçiliği Kurumu"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Danıştay"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Yüksek Hakem Kurulu"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Sayıştay"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_24",
+                "front": "1982 Anayasası'na göre aşağıdakilerden hangisi Anayasa değişikliğine ilişkin kanun teklifinde bulunabilir?",
+                "back": "Doğru Cevap: A) 200 milletvekili",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "200 milletvekili"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Cumhurbaşkanı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Anayasa Mahkemesi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "100.000 seçmen"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Adalet Bakanı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_25",
+                "front": "Fatih, Murat'a 'İdare organları her ne kadar disiplin cezası verebilse de bu kararların yargı denetimi istisnasının olup olmadığını' soruyor. Murat'ın bahsettiği bu istisnalar aşağıdakilerden hangisi için tanınmıştır?",
+                "back": "Doğru Cevap: D) Silahlı Kuvvetler",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Spor federasyonları"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Millî İstihbarat Teşkilatı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Yargı organları"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Silahlı Kuvvetler"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Türkiye Büyük Millet Meclisi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_26",
+                "front": "1982 Anayasası'na göre Millî Güvenlik Kurulunun gündemi, ilgililerin önerileri dikkate alınarak aşağıdakilerin hangisi tarafından düzenlenir?",
+                "back": "Doğru Cevap: D) Cumhurbaşkanı",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "İçişleri bakanı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Genelkurmay başkanı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Millî savunma bakanı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Cumhurbaşkanı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Millî Güvenlik Kurulu Genel Sekreterliği"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_27",
+                "front": "1982 Anayasası'na göre, aşağıdakilerden hangisi cumhurbaşkanının görev ve yetkilerinden biri değildir?",
+                "back": "Doğru Cevap: E) Genel af ilan edilmesine karar vermek",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Gerekli gördüğü takdirde, yasama yılının ilk günü TBMM'de açılış konuşmasını yapmak"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Millî güvenlik politikalarını belirlemek ve gerekli tedbirleri almak"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Milletlerarası antlaşmaları onaylamak ve yayımlamak"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Kanunların Anayasa'ya şekil veya esas bakımından aykırılığı gerekçesiyle iptal davası açmak"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Genel af ilan edilmesine karar vermek"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_28",
+                "front": "Türkiye Büyük Millet Meclisinde kabul edilen bir çevre kanunu aşağıdakilerin hangisi tarafından Resmî Gazete'de yayımlanır?",
+                "back": "Doğru Cevap: B) Cumhurbaşkanı",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Bilgi Teknolojileri ve İletişim Kurumu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Cumhurbaşkanı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Türkiye Büyük Millet Meclisi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Çevre, Şehircilik ve İklim Değişikliği Bakanlığı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İçişleri Bakanlığı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_29",
+                "front": "Yürütme yetki ve görevinin, I. Cumhurbaşkanı, II. Cumhurbaşkanı yardımcıları, III. Bakanlar arasından Anayasa'ya ve kanunlara uygun olarak kullanılacağı 1982 Anayasası'nda açıkça belirtilmiştir?",
+                "back": "Doğru Cevap: A) Yalnız I",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "I ve II"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve III"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "II ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "I, II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_30",
+                "front": "Cumhurbaşkanı ve milletvekilleri, göreve başlarken TBMM'de andiçerler. Aşağıdaki ifadelerden hangisi andiçme sırasında Cumhurbaşkanı tarafından kullanılırken milletvekilleri tarafından kullanılmaz?",
+                "back": "Doğru Cevap: A) Türkiye Cumhuriyeti'nin şan ve şerefini",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Türkiye Cumhuriyeti'nin şan ve şerefini"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Milletin kayıtsız ve şartsız egemenliğini"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Vatanın ve milletin bölünmez bütünlüğünü"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Devletin varlığı ve bağımsızlığını"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Millî dayanışma ve adalet anlayışı içinde"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_31",
+                "front": "1982 Anayasası'na göre idarenin; hukuka uygunluğunun, düzenli ve verimli şekilde yürütülmesinin sağlanması amacıyla Cumhurbaşkanlığına bağlı kurulan merci aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: E) Devlet Denetleme Kurulu",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Kamu Denetçiliği Kurumu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Sayıştay"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Adalet Bakanlığı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Strateji ve Bütçe Başkanlığı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Devlet Denetleme Kurulu"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_32",
+                "front": "1982 Anayasası'na göre, aşağıdaki yüksek mahkemelerden hangisinin üyelerinin tamamı Hâkimler ve Savcılar Yüksek Kurulu tarafından seçilir?",
+                "back": "Doğru Cevap: A) Yargıtay",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yargıtay"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Danıştay"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Askerî Yargıtay"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Askerî Yüksek İdare Mahkemesi"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Uyuşmazlık Mahkemesi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_33",
+                "front": "Askerî Yüksek İdare Mahkemesi, hukukumuzda ilk defa aşağıdakilerden hangisi ile kurulmuştur?",
+                "back": "Doğru Cevap: C) 1961 Anayasası'nda 1971 yılında yapılan anayasa değişikliği",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "1921 Anayasası"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "1924 Anayasası"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "1961 Anayasası'nda 1971 yılında yapılan anayasa değişikliği"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "1982 Anayasası'nın ilk hâli"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "1982 Anayasası'nda 2004 yılında yapılan anayasa değişikliği"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_34",
+                "front": "1982 Anayasası'na göre, merkezî yönetim bütçesi kapsamındaki idarelerin bütün gelir ve giderleri ile mallarını TBMM adına denetleme ve sorumluların hesap ve işlemlerini kesin hükme bağlama görevi hangisine aittir?",
+                "back": "Doğru Cevap: D) Sayıştay",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Devlet Denetleme Kurulu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Anayasa Mahkemesi"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İçişleri Bakanlığı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Sayıştay"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Danıştay"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_35",
+                "front": "1982 Anayasası'na göre bireysel başvuruları karara bağlamak aşağıdakilerden hangisinin görev ve yetkileri arasındadır?",
+                "back": "Doğru Cevap: A) Anayasa Mahkemesi",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Anayasa Mahkemesi"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kamu Denetçiliği Kurumu"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Devlet Denetleme Kurulu"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Türkiye Büyük Millet Meclisi"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Cumhurbaşkanlığı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_36",
+                "front": "Aşağıdakilerden hangisi Türk yargı örgütündeki mahkemelerden biri değildir?",
+                "back": "Doğru Cevap: A) İflas mahkemeleri",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "İflas mahkemeleri"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Asliye ticaret mahkemeleri"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Sulh hukuk mahkemeleri"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Vergi mahkemeleri"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Bölge idare mahkemeleri"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_37",
+                "front": "Adalet bakanı, aşağıdakilerden hangisinin başkanıdır?",
+                "back": "Doğru Cevap: A) Hâkimler ve Savcılar Kurulu",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Hâkimler ve Savcılar Kurulu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Türkiye Büyük Millet Meclisi Adalet Komisyonu"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Yüksek Seçim Kurulu"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Türkiye Büyük Millet Meclisi Anayasa Komisyonu"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Devlet Denetleme Kurulu"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_38",
+                "front": "I. İstinaf, II. Temyiz, III. İlk itiraz / Yukarıdakilerin hangileri hukuk yargılamasında, üst derece veya yüksek mahkemede başvurulabilecek kanun yolları arasında yer alır?",
+                "back": "Doğru Cevap: C) I ve II",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Yalnız II"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve II"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "I ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_39",
+                "front": "Mahkemelerin verdiği kararların kesinleşmeden önce denetlenmesini sağlamak amacıyla üst veya yüksek mahkemeye yapılan başvuru, aşağıdakilerin hangisiyle adlandırılır?",
+                "back": "Doğru Cevap: B) Kanun yolu",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Tahkim"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kanun yolu"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Delil tespiti"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Ön inceleme"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Islah"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_40",
+                "front": "Suç işlendiği izlenimi veren hâlin öğrenilmesiyle harekete geçerek soruşturma işlemlerini yürüten ve kamu davası açan kamu görevlisi, aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: C) Cumhuriyet savcısı",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Müdafi"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Müşteki"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Cumhuriyet savcısı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Ağır ceza mahkemesi başkanı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Sulh ceza hâkimi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_41",
+                "front": "Aşağıdakilerin hangisi, adli yargı mercilerinden biri değildir?",
+                "back": "Doğru Cevap: E) Vergi mahkemesi",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Aile mahkemesi"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "İcra mahkemesi"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Kadastro mahkemesi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Sulh hukuk mahkemesi"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Vergi mahkemesi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_42",
+                "front": "Elif; vergi mahkemesinde görülmekte olan davasına uygulanacak kanun hükmünün, Anayasa'ya aykırı olduğu iddiasıyla iptalini istiyor. Bu durum aşağıdakilerden hangisiyle adlandırılır?",
+                "back": "Doğru Cevap: B) Somut norm denetimi",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yürütmenin durdurulması"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Somut norm denetimi"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Kanun yolu"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Bireysel başvuru"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Tam yargı davası"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_43",
+                "front": "Danıştay'ın bir kararında '...aynı idare içerisindeki görevliler arasındaki astlık-üstlük durumunu ifade etmekte olup... astın yerine geçerek karar alamaz' ifadesiyle vurguladığı idare hukuku kavramı hangisidir?",
+                "back": "Doğru Cevap: D) Hiyerarşi",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Hizmet"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kadro"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Kariyer"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Hiyerarşi"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Liyakat"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_44",
+                "front": "Bir çekişmede tarafların, Devletin yargı organına başvurmak yerine aralarındaki hukuki sorunun hakemler eliyle çözümüne ne ad verilir?",
+                "back": "Doğru Cevap: B) Tahkim",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Uzlaştırma"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Tahkim"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Arabuluculuk"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Konkordato"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Kovuşturma"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_45",
+                "front": "Devlet kamu hizmetleri görevlerine girmek, sınıflar içerisinde ilerlemek ve yükselmek açısından bireylerin bilgi ve yeteneklerini esas alan temel ilke aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: E) Liyakat",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Derecelendirme"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kademelendirme"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Sınıflandırma"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Kariyer"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Liyakat"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_46",
+                "front": "Türk idare hukukuna göre belediyenin organları aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: A) Belediye meclisi - Belediye encümeni - Belediye başkanı",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Belediye meclisi - Belediye encümeni - Belediye başkanı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Belediye meclisi - Genel sekreterlik - Belediye başkanı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İlçe idare kurulu - Genel sekreterlik - Belediye başkanı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Kaymakamlık - Genel sekreterlik - Belediye başkanı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Genel sekreterlik - Belediye meclisi - Belediye encümeni"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_47",
+                "front": "Aşağıdakilerden hangisi 657 sayılı Devlet Memurları Kanunu'nda düzenlenen disiplin cezalarından biri değildir?",
+                "back": "Doğru Cevap: A) Yer değiştirme",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yer değiştirme"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Aylıktan kesme"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Kademe ilerlemesinin durdurulması"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Devlet memurluğundan çıkarma"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Uyarma"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_48",
+                "front": "Türk idare hukukuna göre Devlet Denetleme Kurulu aşağıdakilerden hangisine bağlı olarak çalışır?",
+                "back": "Doğru Cevap: B) Cumhurbaşkanlığı",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Millî Güvenlik Kurulu"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Cumhurbaşkanlığı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Türkiye Büyük Millet Meclisi Başkanlığı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Kamu Düzeni ve Güvenliği Müsteşarlığı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Bakanlar Kurulu"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_49",
+                "front": "Türk idare hukukunda il özel idaresinin başı ve il özel idaresi tüzel kişiliğinin temsilcisi aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: A) Vali",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Vali"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "İl genel meclisi başkanı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Belediye başkanı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "İl encümeni"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İlde kaymakamların en yaşlısı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_50",
+                "front": "Memurların, amirlerinin vermiş olduğu emirleri yerine getirme zorunluluğunun istisnası 1982 Anayasası'nda hangi başlık altında düzenlenmiştir?",
+                "back": "Doğru Cevap: B) Kanunsuz emir",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Merkezî idare"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kanunsuz emir"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İdarenin bütünlüğü ve kamu tüzel kişiliği"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Suç ve cezalara ilişkin esaslar"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Yargı yolu"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_51",
+                "front": "5393 sayılı Belediye Kanunu'na göre; I. İlçe merkezlerinde belediye kurulması zorunludur. II. Köylerde belediye kurulması zorunludur. III. Nüfusu 5.000 ve üzerinde olan yerleşim birimlerinde belediye kurulabilir. (Hangileri doğrudur?)",
+                "back": "Doğru Cevap: C) I ve III",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "I ve II"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve III"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "II ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "I, II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_52",
+                "front": "657 sayılı Devlet Memurları Kanunu'na göre aşağıdakilerden hangisi memurluğu sona erdiren nedenlerden biri değildir?",
+                "back": "Doğru Cevap: D) Görevden uzaklaştırma",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Memurluktan çekilme"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Ölüm"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Memurluktan çıkarılma"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Görevden uzaklaştırma"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Emeklilik"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_53",
+                "front": "I. Cumhurbaşkanı, II. Bakanlıklar, III. Kamu tüzel kişileri. 1982 Anayasası'na göre yukarıdakilerden hangileri yönetmelik çıkarabilir?",
+                "back": "Doğru Cevap: E) I, II ve III",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yalnız I"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Yalnız III"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "I ve II"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "II ve III"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "I, II ve III"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_54",
+                "front": "442 sayılı Köy Kanunu'na göre nüfusu en fazla kaça kadar olan yurtlara köy denir?",
+                "back": "Doğru Cevap: D) 2.000",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "500"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "1.000"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "1.500"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "2.000"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "2.500"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_55",
+                "front": "657 sayılı Devlet Memurları Kanunu'na göre, aşağıdakilerden hangisi devlet memurlarına verilecek disiplin cezalarından biridir?",
+                "back": "Doğru Cevap: B) Aylıktan kesme",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "İdari para cezası"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Aylıktan kesme"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Disiplin hapsi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "İdari tedbir"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Görevden uzaklaştırma"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_56",
+                "front": "Aşağıdakilerden hangisinin seçiminde, siyasi partilerden aday olunamaz?",
+                "back": "Doğru Cevap: D) Mahalle muhtarlığı ve ihtiyar heyeti üyeliği",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Belde belediye başkanlığı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "İl genel meclisi üyeliği"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Büyükşehir ilçe belediye meclis üyeliği"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Mahalle muhtarlığı ve ihtiyar heyeti üyeliği"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İl belediye başkanlığı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_57",
+                "front": "Türkiye'de bazı şehirlerde belediye otobüsleriyle, belirli hatlarda 24 saat sefer yapılarak toplu taşıma hizmeti sunuluyor. Bu durum hangi ilkeyle ilişkilidir?",
+                "back": "Doğru Cevap: C) Süreklilik",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Tarafsızlık"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Meccanilik"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Süreklilik"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Eşitlik"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Uyarlama"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_58",
+                "front": "657 sayılı Devlet Memurları Kanunu'na göre aday olarak atanmış devlet memurunun, asgari ve azami adaylık süresiyle ilgili hangisi doğrudur?",
+                "back": "Doğru Cevap: C) 1 yıl - 2 yıl",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "6 ay - 1 yıl"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "6 ay - 2 yıl"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "1 yıl - 2 yıl"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "1 yıl - 3 yıl"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "2 yıl - 3 yıl"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_59",
+                "front": "İl genel meclisi, aşağıdakilerden hangisinin karar organıdır?",
+                "back": "Doğru Cevap: B) İl özel idaresi",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "İl genel idaresi"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "İl özel idaresi"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İl idare kurulu"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "İl idare şube başkanlıkları"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İl müdürlükleri"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_60",
+                "front": "Nüfus koşulunu sağlayan bir il belediyesi, aşağıdakilerin hangisiyle büyükşehir belediyesine dönüştürülebilir?",
+                "back": "Doğru Cevap: B) Kanunla",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Cumhurbaşkanı kararıyla"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kanunla"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "İçişleri Bakanlığı kararıyla"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "İl idare kurulu kararıyla"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Yönetmelikle"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_61",
+                "front": "Gülce, 21 yıldır Sağlık Bakanlığında memur olarak çalışmaktadır. Gülce'nin yıllık izin süresi, kural olarak kaç gündür?",
+                "back": "Doğru Cevap: C) 30",
+                "correctOption": "C",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "20"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "25"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "30"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "32"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "40"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_62",
+                "front": "İdari bir tasarruf, ancak bunu yapan organ tarafından kaldırılır yahut değiştirilir. / İdari işlemlerin geri alınmasının ancak işlemi tesis eden makam tarafından... Danıştay bu ifadelerle idare hukukunun hangi ilkesini vurgulamaktadır?",
+                "back": "Doğru Cevap: A) Yetkide paralellik",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yetkide paralellik"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Usul saptırması"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Fait du prince"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Yetki tecavüzü"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Sebep ikamesi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_63",
+                "front": "Göreviyle ilgili bir suç işlediği iddiasıyla belediye meclisi üyesi A hakkında soruşturma açılıyor. A'yı görevinden uzaklaştırabilme yetkisi kime aittir?",
+                "back": "Doğru Cevap: D) İçişleri bakanı",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Cumhurbaşkanı"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Danıştay başkanı"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Adalet bakanı"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "İçişleri bakanı"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Belediye başkanı"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_64",
+                "front": "Danıştay bir kararında 'Merkeze ait olan karar alma yetkisinin illerde valiler tarafından kullanılması... sonuçta merkezî idarenin ortaya çıkardığı sorunların kısmen de olsa giderilmesini amaçlamaktadır.' diyerek hangi kavramı vurgulamıştır?",
+                "back": "Doğru Cevap: A) Yetki genişliği",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Yetki genişliği"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Usulde paralellik"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Yerinden yönetim"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Takdir yetkisi"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İdari vesayet"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_65",
+                "front": "657 sayılı Kanun'a göre 'aylıktan kesme' cezası alan bir memurun, cezanın uygulanmasından başlayarak en az kaç yıl sonra silinmesini isteyebilir?",
+                "back": "Doğru Cevap: E) 10",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "1"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "3"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "5"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "8"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "10"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_66",
+                "front": "657 sayılı Kanun'a göre devlet memurlarına, yaptıkları hizmetler için lüzumlu bilgilere ve yetişme şartlarına uygun şekilde sınıfları içinde en yüksek derecelere kadar ilerleme imkânının sağlanmasını ifade eden temel ilke hangisidir?",
+                "back": "Doğru Cevap: B) Kariyer",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Liyakat"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kariyer"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Sınıflandırma"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Rekabet"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İltimas"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_67",
+                "front": "Ortalama 4.900 metre rakımıyla Dünyanın en yüksek bölgesi olan ve 'Dünya'nın Çatısı' olarak adlandırılan ülke aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: B) Tibet",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Hindistan"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Tibet"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Çin"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Afganistan"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Nepal"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_68",
+                "front": "'Evrenin merkezinin Dünya değil, Güneş olduğu' tezini geri çekmediği için engizisyon mahkemesi tarafından hapse mahkûm edilen bilim insanı kimdir?",
+                "back": "Doğru Cevap: D) Galileo Galilei",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Nicolaus Copernicus"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Johannes Kepler"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Isaac Newton"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Galileo Galilei"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Leonardo da Vinci"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_69",
+                "front": "8 Mart 2014 tarihinde Malezya'nın başkenti Kuala Lumpur'dan havalandıktan sonra içindeki 227 yolcu ve 12 mürettebatla kaybolan uçak hangi şehre gitmekteydi?",
+                "back": "Doğru Cevap: E) Pekin",
+                "correctOption": "E",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Manila"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Seul"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Bangkok"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Tokyo"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Pekin"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_70",
+                "front": "26 Nisan 2015 tarihinde yapılan seçimde Nursultan Nazarbayev'in %97'nin üzerinde oyla yeniden devlet başkanı seçildiği ülke hangisidir?",
+                "back": "Doğru Cevap: B) Kazakistan",
+                "correctOption": "B",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Tacikistan"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Kazakistan"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Türkmenistan"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Özbekistan"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Kırgızistan"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_71",
+                "front": "Bilim adamlarının 'Kızıl Gezegen' olarak isimlendirdiği ve Dünya'dan yaklaşık iki kat daha küçük olan gezegen aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: D) Mars",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Neptün"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Merkür"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Venüs"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Mars"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Jüpiter"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_72",
+                "front": "Aşağıdakilerden hangisi Yaşar Kemal'in eserlerinden biri değildir?",
+                "back": "Doğru Cevap: D) Esir Şehrin İnsanları",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "İnce Memed"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Yer Demir Gök Bakır"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Ağrı Dağı Efsanesi"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Esir Şehrin İnsanları"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Yılanı Öldürseler"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_73",
+                "front": "Bir kayanın üzerine oturmuş, elini çenesine dayamış ve derin düşüncelere dalmış bir erkek figürünün tasvir edildiği 'Düşünen Adam' heykeli kime aittir?",
+                "back": "Doğru Cevap: D) Auguste Rodin",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Michelangelo"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Pablo Picasso"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Leonardo da Vinci"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Auguste Rodin"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Frederic Auguste Bartholdi"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_74",
+                "front": "Dünya tıp tarihinde önemli bir yere sahip olan, El-Kanun fi't-Tıb adlı eseri yazan ve Batı dünyasında 'Avicenna' olarak bilinen İslam bilgini kimdir?",
+                "back": "Doğru Cevap: D) İbni Sina",
+                "correctOption": "D",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Farabi"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "El-Biruni"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "El-Cezerî"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "İbni Sina"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "İbni Haldun"
+                    }
+                ],
+                "mastered": false
+            },
+            {
+                "id": "c_cikmis_75",
+                "front": "Her yıl adına ödül verilen Türkiye'nin ilk Müslüman Türk kadın tiyatro oyuncusu aşağıdakilerden hangisidir?",
+                "back": "Doğru Cevap: A) Afife Jale",
+                "correctOption": "A",
+                "options": [
+                    {
+                        "letter": "A",
+                        "text": "Afife Jale"
+                    },
+                    {
+                        "letter": "B",
+                        "text": "Cahide Sonku"
+                    },
+                    {
+                        "letter": "C",
+                        "text": "Neyyire Neyyir"
+                    },
+                    {
+                        "letter": "D",
+                        "text": "Keriman Halis"
+                    },
+                    {
+                        "letter": "E",
+                        "text": "Adile Naşit"
+                    }
+                ],
+                "mastered": false
+            }
+        ]
+    },
     {
         "id": "deck-karma",
         "title": "Karma",
@@ -7374,14 +9512,14 @@ const STORAGE_KEY = 'notebooklm_flashcards_decks';
 const ACTIVE_DECK_KEY = 'notebooklm_active_deck_id';
 const STATS_KEY = 'notebooklm_study_stats';
 const VERSION_KEY = 'notebooklm_app_version';
-const CURRENT_VERSION = '3.0_true_false_mode';
+const CURRENT_VERSION = '8.0_vatandaslik_cikmis_sorular_75_soru_layout_fixed';
 
 class DeckStorage {
     static checkAndMigrateVersion() {
         try {
             const savedVersion = localStorage.getItem(VERSION_KEY);
             if (savedVersion !== CURRENT_VERSION) {
-                console.log('Yeni versiyon algılandı, yerel veriler 992 kartlık güncel sürüme yükseltiliyor...');
+                console.log('Yeni versiyon algılandı, yerel veriler 1067 kartlık güncel sürüme yükseltiliyor...');
                 localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
                 if (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {
                     this.saveDecks(SAMPLE_DECKS);
@@ -7425,7 +9563,7 @@ class DeckStorage {
                 });
             }
 
-            if (needsReset || (savedDecks.length < 5 && typeof SAMPLE_DECKS !== 'undefined')) {
+            if (needsReset || (savedDecks.length < 6 && typeof SAMPLE_DECKS !== 'undefined')) {
                 savedDecks = (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) ? SAMPLE_DECKS : [];
                 this.saveDecks(savedDecks);
                 return savedDecks;
@@ -7528,46 +9666,37 @@ class DeckStorage {
 
     </script>
     <script>
-/**
- * 3D Flashcard Mode Controller
- */
-class FlashcardMode {
-    constructor(containerEl) {
-        this.container = containerEl;
-        this.deck = null;
-        this.cards = [];
-        this.currentIndex = 0;
-        this.isFlipped = false;
-        this.speechSynth = window.speechSynthesis;
-    }
 
-    init(deck) {
+class FlashcardMode {
+    constructor(containerEl, deck) {
+        this.container = containerEl;
         this.deck = deck;
         this.cards = deck ? [...deck.cards] : [];
         this.currentIndex = 0;
         this.isFlipped = false;
+        this.speechSynth = window.speechSynthesis;
+        window.flashcardMode = this;
+
         this.render();
     }
 
     render() {
         if (!this.cards || this.cards.length === 0) {
             this.container.innerHTML = `
-                <div class="empty-mode-state">
-                    <div class="empty-icon">🎴</div>
+                <div class="empty-mode-state" style="text-align:center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-lg);">
+                    <div class="empty-icon" style="font-size:3rem; margin-bottom:1rem;">🎴</div>
                     <h3>Bu destede henüz kart bulunmuyor</h3>
-                    <p>NotebookLM'den kartlarınızı kopyalayıp "Kart Yükle" butonundan ekleyebilirsiniz.</p>
+                    <p style="color:var(--text-muted); margin-top:0.5rem;">Lütfen başka bir deste seçin.</p>
                 </div>
             `;
             return;
         }
 
         const card = this.cards[this.currentIndex];
-        const masteredCount = this.cards.filter(c => c.mastered).length;
         const progressPercent = Math.round(((this.currentIndex + 1) / this.cards.length) * 100);
 
         this.container.innerHTML = `
             <div class="flashcard-mode-wrapper">
-                <!-- Üst İlerleme & Kontrol Barı -->
                 <div class="mode-header-bar">
                     <div class="card-counter">
                         <span class="current-num">${this.currentIndex + 1}</span> / <span class="total-num">${this.cards.length}</span> Kart
@@ -7580,10 +9709,8 @@ class FlashcardMode {
                     </div>
                 </div>
 
-                <!-- 3D Kart Alanı -->
                 <div class="card-stage">
                     <div class="flashcard-3d ${this.isFlipped ? 'flipped' : ''}" id="mainFlashcard">
-                        <!-- Kart Ön Yüzü -->
                         <div class="card-face card-front">
                             <div class="card-header-tag">
                                 <span class="tag-label">Soru / Kavram</span>
@@ -7599,7 +9726,6 @@ class FlashcardMode {
                             </div>
                         </div>
 
-                        <!-- Kart Arka Yüzü -->
                         <div class="card-face card-back">
                             <div class="card-header-tag">
                                 <span class="tag-label">Cevap / Açıklama</span>
@@ -7617,7 +9743,6 @@ class FlashcardMode {
                     </div>
                 </div>
 
-                <!-- Alt Navigasyon Kontrolleri -->
                 <div class="flashcard-controls">
                     <button class="ctrl-btn secondary-btn" onclick="window.flashcardMode.prevCard()" ${this.currentIndex === 0 ? 'disabled' : ''}>
                         ← Önceki
@@ -7638,7 +9763,6 @@ class FlashcardMode {
             </div>
         `;
 
-        // Kart tıklama olayı
         const cardEl = document.getElementById('mainFlashcard');
         if (cardEl) {
             cardEl.addEventListener('click', () => this.toggleFlip());
@@ -7678,57 +9802,52 @@ class FlashcardMode {
         const card = this.cards[this.currentIndex];
         card.mastered = !card.mastered;
         
-        // DeckStorage'a kaydet
-        if (this.deck) {
-            const cardInDeck = this.deck.cards.find(c => c.id === card.id);
-            if (cardInDeck) cardInDeck.mastered = card.mastered;
-            DeckStorage.saveDeck(this.deck);
+        const activeDeck = DeckStorage.getDeckById(this.deck.id);
+        if (activeDeck) {
+            const targetCard = activeDeck.cards.find(c => c.id === card.id);
+            if (targetCard) {
+                targetCard.mastered = card.mastered;
+                DeckStorage.saveDeck(activeDeck);
+            }
         }
 
-        if (card.mastered) {
-            DeckStorage.recordStudySession(0, 1);
-        }
-
+        DeckStorage.recordStudySession(0, card.mastered ? 1 : -1);
         this.render();
     }
 
     speakCurrent(side) {
         if (!this.speechSynth) return;
-        this.speechSynth.cancel(); // Önceki seslendirmeyi durdur
-
         const card = this.cards[this.currentIndex];
         const text = side === 'front' ? card.front : card.back;
-
+        
+        this.speechSynth.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        // Türkçe metin varsayımı
         utterance.lang = 'tr-TR';
         utterance.rate = 0.95;
-
         this.speechSynth.speak(utterance);
     }
 
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.innerText = text;
-        return div.innerHTML.replace(/\n/g, '<br>');
+    escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { FlashcardMode };
 }
 
     </script>
     <script>
 
-class TrueFalseMode {
+class MultipleChoiceMode {
     constructor(container, deck) {
         this.container = container;
         this.deck = deck;
         this.cards = deck ? [...deck.cards] : [];
         this.currentIndex = 0;
         this.score = { correct: 0, wrong: 0 };
-        this.currentQuestion = null;
         this.answered = false;
         
         this.init();
@@ -7738,14 +9857,14 @@ class TrueFalseMode {
         if (!this.cards || this.cards.length === 0) {
             this.container.innerHTML = `
                 <div class="empty-state" style="text-align:center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-lg);">
-                    <h3>Bu destede henüz kart bulunmuyor.</h3>
-                    <p style="color: var(--text-muted); margin-top: 0.5rem;">Lütfen kart yükleyin veya farklı bir deste seçin.</p>
+                    <h3>Bu destede henüz soru bulunmuyor.</h3>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem;">Lütfen geçerli bir test destesi seçin.</p>
                 </div>
             `;
             return;
         }
 
-        this.cards = this.shuffleArray([...this.cards]);
+        this.cards = [...this.cards];
         this.currentIndex = 0;
         this.score = { correct: 0, wrong: 0 };
 
@@ -7759,41 +9878,26 @@ class TrueFalseMode {
 
     renderStage() {
         this.container.innerHTML = `
-            <div class="tf-mode-wrapper">
-                <div class="tf-header-bar">
-                    <div class="tf-progress-info">
-                        Soru <strong id="tfCurrentNum">1</strong> / ${this.cards.length}
+            <div class="mc-mode-wrapper">
+                <div class="mc-header-bar">
+                    <div class="mc-progress-info">
+                        Soru <strong id="mcCurrentNum">1</strong> / ${this.cards.length}
                     </div>
-                    <div class="tf-score-badge">
-                        <span class="correct-count" style="color: var(--emerald-accent);">✅ Doğru: <strong id="tfCorrectScore">0</strong></span>
-                        <span class="wrong-count" style="color: var(--rose-accent);">❌ Yanlış: <strong id="tfWrongScore">0</strong></span>
+                    <div class="mc-score-badge">
+                        <span style="color: var(--emerald-accent);">✅ Doğru: <strong id="mcCorrectScore">0</strong></span>
+                        <span style="color: var(--rose-accent);">❌ Yanlış: <strong id="mcWrongScore">0</strong></span>
                     </div>
                 </div>
 
-                <div class="tf-card-box" id="tfCardBox">
-                    <div class="tf-question-title" id="tfQuestionText">
+                <div class="mc-card-box" id="mcCardBox">
+                    <div class="mc-question-text" id="mcQuestionText">
                         Soru yükleniyor...
                     </div>
-                    <div class="tf-proposed-answer-box" id="tfAnswerBox">
-                        <span class="tf-label">💡 Verilen Cevap / Açıklama:</span>
-                        <p class="tf-proposed-text" id="tfProposedText">...</p>
-                    </div>
-                    <div class="tf-feedback-msg" id="tfFeedbackMsg" style="display:none;"></div>
-                </div>
-
-                <div class="tf-action-buttons" id="tfActionBtns">
-                    <button class="tf-btn true-btn" id="btnTrue">
-                        ✅ DOĞRU
-                    </button>
-                    <button class="tf-btn false-btn" id="btnFalse">
-                        ❌ YANLIŞ
-                    </button>
+                    <div class="mc-options-grid" id="mcOptionsGrid"></div>
+                    <div class="mc-feedback-msg" id="mcFeedbackMsg" style="display:none;"></div>
                 </div>
             </div>
         `;
-
-        document.getElementById('btnTrue').addEventListener('click', () => this.handleUserAnswer(true));
-        document.getElementById('btnFalse').addEventListener('click', () => this.handleUserAnswer(false));
     }
 
     loadNextQuestion() {
@@ -7804,75 +9908,103 @@ class TrueFalseMode {
 
         this.answered = false;
         const currentCard = this.cards[this.currentIndex];
-        
-        // 50% ihtimalle DOĞRU cevabı göster, 50% ihtimalle başka bir kartın YANLIŞ cevabını göster
-        const isActuallyTrue = Math.random() < 0.5;
 
-        let displayedAnswer = currentCard.back;
-        if (!isActuallyTrue && this.cards.length > 1) {
+        let options = currentCard.options;
+        let correctLetter = currentCard.correctOption || 'A';
+
+        if (!options || options.length < 2) {
             const otherCards = this.cards.filter(c => c.id !== currentCard.id);
-            const randomOther = otherCards[Math.floor(Math.random() * otherCards.length)];
-            displayedAnswer = randomOther.back;
+            const shuffledOthers = this.shuffleArray([...otherCards]).slice(0, 4);
+            
+            const rawOptions = [
+                { text: currentCard.back, isCorrect: true },
+                ...shuffledOthers.map(c => ({ text: c.back, isCorrect: false }))
+            ];
+            const shuffledOptions = this.shuffleArray(rawOptions);
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+            
+            options = shuffledOptions.map((opt, idx) => {
+                if (opt.isCorrect) correctLetter = letters[idx];
+                return { letter: letters[idx], text: opt.text };
+            });
         }
 
         this.currentQuestion = {
             card: currentCard,
-            displayedAnswer: displayedAnswer,
-            isActuallyTrue: isActuallyTrue,
-            realAnswer: currentCard.back
+            options: options,
+            correctLetter: correctLetter,
+            correctText: options.find(o => o.letter === correctLetter)?.text || currentCard.back
         };
 
-        document.getElementById('tfCurrentNum').textContent = this.currentIndex + 1;
-        document.getElementById('tfQuestionText').textContent = currentCard.front;
-        document.getElementById('tfProposedText').textContent = displayedAnswer;
-        
-        const feedbackEl = document.getElementById('tfFeedbackMsg');
+        document.getElementById('mcCurrentNum').textContent = this.currentIndex + 1;
+        document.getElementById('mcQuestionText').textContent = currentCard.front;
+
+        const optionsGrid = document.getElementById('mcOptionsGrid');
+        optionsGrid.innerHTML = options.map(opt => `
+            <button class="mc-option-btn" data-letter="${opt.letter}" onclick="window.multipleChoiceMode.selectOption('${opt.letter}')">
+                <span class="mc-option-badge">${opt.letter}</span>
+                <span>${this.escapeHtml(opt.text)}</span>
+            </button>
+        `).join('');
+
+        const feedbackEl = document.getElementById('mcFeedbackMsg');
         feedbackEl.style.display = 'none';
-        feedbackEl.className = 'tf-feedback-msg';
 
-        const cardBox = document.getElementById('tfCardBox');
-        cardBox.className = 'tf-card-box';
+        const cardBox = document.getElementById('mcCardBox');
+        cardBox.className = 'mc-card-box';
 
-        const actionBtns = document.getElementById('tfActionBtns');
-        actionBtns.style.pointerEvents = 'auto';
-        actionBtns.style.opacity = '1';
+        window.multipleChoiceMode = this;
     }
 
-    handleUserAnswer(userSaidTrue) {
+    selectOption(selectedLetter) {
         if (this.answered) return;
         this.answered = true;
 
-        const isCorrectChoice = (userSaidTrue === this.currentQuestion.isActuallyTrue);
-        
-        const cardBox = document.getElementById('tfCardBox');
-        const feedbackEl = document.getElementById('tfFeedbackMsg');
-        const actionBtns = document.getElementById('tfActionBtns');
-        
-        actionBtns.style.pointerEvents = 'none';
-        actionBtns.style.opacity = '0.5';
+        const isCorrect = (selectedLetter === this.currentQuestion.correctLetter);
+        const cardBox = document.getElementById('mcCardBox');
+        const feedbackEl = document.getElementById('mcFeedbackMsg');
+        const optionBtns = document.querySelectorAll('.mc-option-btn');
 
-        if (isCorrectChoice) {
+        optionBtns.forEach(btn => {
+            btn.disabled = true;
+            const letter = btn.getAttribute('data-letter');
+            if (letter === this.currentQuestion.correctLetter) {
+                btn.classList.add('selected-correct');
+            } else if (letter === selectedLetter) {
+                btn.classList.add('selected-wrong');
+            }
+        });
+
+        if (isCorrect) {
             this.score.correct++;
-            document.getElementById('tfCorrectScore').textContent = this.score.correct;
+            document.getElementById('mcCorrectScore').textContent = this.score.correct;
             cardBox.classList.add('correct-border');
-            feedbackEl.className = 'tf-feedback-msg success';
-            feedbackEl.innerHTML = `🎉 <strong>Tebrikler, Doğru Bildiniz!</strong>`;
+            feedbackEl.className = 'mc-feedback-msg success';
+            feedbackEl.innerHTML = `🎉 <strong>Tebrikler, Doğru Cevap!</strong> (${this.currentQuestion.correctLetter})`;
         } else {
             this.score.wrong++;
-            document.getElementById('tfWrongScore').textContent = this.score.wrong;
+            document.getElementById('mcWrongScore').textContent = this.score.wrong;
             cardBox.classList.add('wrong-border');
-            feedbackEl.className = 'tf-feedback-msg error';
-            feedbackEl.innerHTML = `❌ <strong>Yanlış!</strong> Verilen bilgi ${this.currentQuestion.isActuallyTrue ? 'Doğruydu' : 'Yanlıştı'}.<br>👉 Gerçek Cevap: <em>${this.currentQuestion.realAnswer}</em>`;
+            feedbackEl.className = 'mc-feedback-msg error';
+            feedbackEl.innerHTML = `❌ <strong>Yanlış Seçim!</strong><br>👉 Gerçek Doğru Cevap: <strong>${this.currentQuestion.correctLetter}) ${this.escapeHtml(this.currentQuestion.correctText)}</strong>`;
         }
 
         feedbackEl.style.display = 'block';
+        DeckStorage.recordStudySession(1, isCorrect ? 1 : 0);
 
-        DeckStorage.recordStudySession(1, isCorrectChoice ? 1 : 0);
-
-        setTimeout(() => {
+        const containerBox = document.getElementById('mcCardBox');
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'ctrl-btn next-btn';
+        nextBtn.style.marginTop = '1rem';
+        nextBtn.style.padding = '1rem';
+        nextBtn.style.fontSize = '1.2rem';
+        nextBtn.innerHTML = 'Sonraki Soruya Geç ➔';
+        nextBtn.onclick = () => {
             this.currentIndex++;
             this.loadNextQuestion();
-        }, 1700);
+        };
+
+        containerBox.appendChild(nextBtn);
     }
 
     showResults() {
@@ -7881,7 +10013,7 @@ class TrueFalseMode {
 
         this.container.innerHTML = `
             <div class="quiz-results-box" style="max-width: 600px; margin: 2rem auto; text-align: center; background: var(--bg-card); padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--glass-border);">
-                <h2>🎉 Doğru / Yanlış Testi Tamamlandı!</h2>
+                <h2>🎉 Çoktan Seçmeli Test Tamamlandı!</h2>
                 <div style="font-size: 3.5rem; margin: 1.5rem 0;">
                     ${percent >= 70 ? '🏆' : '📚'}
                 </div>
@@ -7890,25 +10022,33 @@ class TrueFalseMode {
                     <span style="color: var(--emerald-accent);">✅ Doğru: <strong>${this.score.correct}</strong></span>
                     <span style="color: var(--rose-accent);">❌ Yanlış: <strong>${this.score.wrong}</strong></span>
                 </div>
-                <button class="ctrl-btn primary-btn" id="restartTFBtn">
+                <button class="ctrl-btn primary-btn" id="restartMCBtn">
                     🔄 Testi Tekrar Başlat
                 </button>
             </div>
         `;
 
-        document.getElementById('restartTFBtn').addEventListener('click', () => this.init());
+        document.getElementById('restartMCBtn').addEventListener('click', () => this.init());
+    }
+
+    escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 }
 
     </script>
     <script>
-/**
- * Card Matching Game Mode Controller
- */
+
 class MatchMode {
-    constructor(containerEl) {
+    constructor(containerEl, deck) {
         this.container = containerEl;
-        this.deck = null;
+        this.deck = deck;
         this.tiles = [];
         this.selectedTile = null;
         this.matchesCount = 0;
@@ -7916,6 +10056,9 @@ class MatchMode {
         this.timer = 0;
         this.timerInterval = null;
         this.isCompleted = false;
+        window.matchMode = this;
+
+        this.init(deck);
     }
 
     init(deck) {
@@ -7928,20 +10071,18 @@ class MatchMode {
 
         if (!deck || !deck.cards || deck.cards.length < 2) {
             this.container.innerHTML = `
-                <div class="empty-mode-state">
-                    <div class="empty-icon">🧩</div>
+                <div class="empty-mode-state" style="text-align:center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-lg);">
+                    <div class="empty-icon" style="font-size:3rem; margin-bottom:1rem;">🧩</div>
                     <h3>Eşleştirme Oyunu İçin En Az 2 Kart Gereklidir</h3>
-                    <p>Eşleştirme oyunu oynamak için destenizde daha fazla bilgi kartı olduğundan emin olun.</p>
+                    <p style="color:var(--text-muted); margin-top:0.5rem;">Eşleştirme oyunu oynamak için destenizde daha fazla bilgi kartı olduğundan emin olun.</p>
                 </div>
             `;
             return;
         }
 
-        // Oyunda en fazla 8 çift (16 kart karoları) göster
         const selectedCards = [...deck.cards].sort(() => 0.5 - Math.random()).slice(0, 8);
         this.totalPairs = selectedCards.length;
 
-        // Front ve Back karoları oluştur
         const tileList = [];
         selectedCards.forEach(card => {
             tileList.push({
@@ -7960,7 +10101,6 @@ class MatchMode {
             });
         });
 
-        // Karoları karıştır
         this.tiles = tileList.sort(() => 0.5 - Math.random());
 
         this.startTimer();
@@ -8013,16 +10153,13 @@ class MatchMode {
         if (tile.matched || (this.selectedTile && this.selectedTile.id === tile.id)) return;
 
         if (!this.selectedTile) {
-            // İlk karoyu seç
             this.selectedTile = tile;
             this.render();
         } else {
-            // İkinci karoyu seç ve kontrol et
             const first = this.selectedTile;
             const second = tile;
 
             if (first.cardId === second.cardId && first.type !== second.type) {
-                // DOĞRU EŞLEŞME
                 first.matched = true;
                 second.matched = true;
                 this.matchesCount++;
@@ -8034,10 +10171,7 @@ class MatchMode {
                 }
                 this.render();
             } else {
-                // YANLIŞ EŞLEŞME - Geçici vurgu göster
                 this.selectedTile = null;
-                const tileEls = document.querySelectorAll('.match-tile');
-                // Hatalı tile görseli
                 this.render();
             }
         }
@@ -8045,10 +10179,10 @@ class MatchMode {
 
     renderVictory() {
         this.container.innerHTML = `
-            <div class="match-victory-box">
-                <div class="result-icon">⚡</div>
+            <div class="match-victory-box" style="text-align:center; padding:3rem; background:var(--bg-card); border-radius:var(--radius-lg);">
+                <div class="result-icon" style="font-size:3.5rem; margin-bottom:1rem;">⚡</div>
                 <h2>Harika! Tüm Kartları Eşleştirdiniz!</h2>
-                <p>Tüm kavram ve tanımları <strong>${this.timer} saniyede</strong> başarıyla tamamladınız.</p>
+                <p style="margin:1rem 0; font-size:1.15rem;">Tüm kavram ve tanımları <strong>${this.timer} saniyede</strong> başarıyla tamamladınız.</p>
                 <div class="result-actions">
                     <button class="ctrl-btn primary-btn" onclick="window.matchMode.init(window.matchMode.deck)">
                         🎮 Yeniden Oyna
@@ -8060,14 +10194,14 @@ class MatchMode {
     }
 
     escapeHtml(text) {
-        const div = document.createElement('div');
-        div.innerText = text;
-        return div.innerHTML;
+        if (!text) return '';
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { MatchMode };
 }
 
     </script>
@@ -8075,34 +10209,48 @@ if (typeof module !== 'undefined' && module.exports) {
 
 class FlashcardApp {
     constructor() {
-        this.activeMode = 'flashcard';
-        this.activeDeckId = null;
+        this.activeMode = 'multiplechoice';
+        this.activeDeckId = 'deck-vatandaslik-cikmis';
         this.activeModeInstance = null;
 
         this.init();
     }
 
     init() {
-        this.activeDeckId = DeckStorage.getActiveDeckId();
-
-        this.renderDeckSelectOptions();
         this.setupEventListeners();
-        this.updateGlobalStats();
         this.loadActiveMode();
     }
 
     renderDeckSelectOptions() {
-        const decks = DeckStorage.getDecks();
+        const allDecks = DeckStorage.getDecks();
         const selectEl = document.getElementById('deckSelect');
         const descEl = document.getElementById('deckDesc');
 
         if (!selectEl) return;
 
+        // Mod bazlı filtreleme:
+        // Eğer Çoktan Seçmeli Test ise SADECE Test desteleri (Vatandaşlık Çıkmış Sorular)
+        // Eğer 3D Kart / Eşleştirme / Yönetim ise SADECE Bilgi Kartları desteleri
+        let filteredDecks = [];
+        if (this.activeMode === 'multiplechoice') {
+            filteredDecks = allDecks.filter(d => d.id === 'deck-vatandaslik-cikmis' || d.category === 'Vatandaşlık Çıkmış');
+            if (!filteredDecks.some(d => d.id === this.activeDeckId)) {
+                this.activeDeckId = filteredDecks[0] ? filteredDecks[0].id : 'deck-vatandaslik-cikmis';
+            }
+        } else {
+            filteredDecks = allDecks.filter(d => d.id !== 'deck-vatandaslik-cikmis' && d.category !== 'Vatandaşlık Çıkmış');
+            if (!filteredDecks.some(d => d.id === this.activeDeckId)) {
+                this.activeDeckId = filteredDecks[0] ? filteredDecks[0].id : 'deck-karma';
+            }
+        }
+
+        DeckStorage.setActiveDeckId(this.activeDeckId);
+
         selectEl.innerHTML = '';
-        decks.forEach(deck => {
+        filteredDecks.forEach(deck => {
             const option = document.createElement('option');
             option.value = deck.id;
-            option.textContent = `${deck.title} (${deck.cards.length} kart)`;
+            option.textContent = `${deck.title} (${deck.cards.length} ${this.activeMode === 'multiplechoice' ? 'soru' : 'kart'})`;
             if (deck.id === this.activeDeckId) {
                 option.selected = true;
             }
@@ -8110,8 +10258,8 @@ class FlashcardApp {
         });
 
         const activeDeck = DeckStorage.getDeckById(this.activeDeckId);
-        if (activeDeck) {
-            descEl.textContent = activeDeck.description || `${activeDeck.cards.length} kart içeriyor.`;
+        if (activeDeck && descEl) {
+            descEl.textContent = activeDeck.description || `${activeDeck.cards.length} içerik bulunuyor.`;
         }
     }
 
@@ -8124,7 +10272,7 @@ class FlashcardApp {
                 
                 const activeDeck = DeckStorage.getDeckById(this.activeDeckId);
                 if (activeDeck) {
-                    document.getElementById('deckDesc').textContent = activeDeck.description || `${activeDeck.cards.length} kart içeriyor.`;
+                    document.getElementById('deckDesc').textContent = activeDeck.description || `${activeDeck.cards.length} içerik bulunuyor.`;
                 }
 
                 this.loadActiveMode();
@@ -8141,98 +10289,22 @@ class FlashcardApp {
                 this.loadActiveMode();
             });
         });
-
-        const openModalBtn = document.getElementById('openUploadModalBtn');
-        const closeModalBtn = document.getElementById('closeUploadModalBtn');
-        const uploadModal = document.getElementById('uploadModal');
-        const processImportBtn = document.getElementById('processImportBtn');
-        const newDeckBtn = document.getElementById('newDeckBtn');
-
-        if (openModalBtn) openModalBtn.addEventListener('click', () => uploadModal.classList.add('active'));
-        if (closeModalBtn) closeModalBtn.addEventListener('click', () => uploadModal.classList.remove('active'));
-
-        if (newDeckBtn) {
-            newDeckBtn.addEventListener('click', () => {
-                const title = prompt('Yeni Deste Başlığı:');
-                if (title && title.trim() !== '') {
-                    const newDeck = {
-                        id: 'deck-' + Date.now(),
-                        title: title.trim(),
-                        description: 'Özel oluşturulan yeni deste',
-                        category: 'Genel',
-                        createdAt: new Date().toISOString(),
-                        cards: []
-                    };
-                    DeckStorage.saveDeck(newDeck);
-                    this.activeDeckId = newDeck.id;
-                    DeckStorage.setActiveDeckId(this.activeDeckId);
-                    this.renderDeckSelectOptions();
-                    this.loadActiveMode();
-                }
-            });
-        }
-
-        if (processImportBtn) {
-            processImportBtn.addEventListener('click', () => {
-                const titleInput = document.getElementById('importDeckTitle').value.trim();
-                const textInput = document.getElementById('importTextarea').value;
-
-                if (!textInput.trim()) {
-                    alert('Lütfen içe aktarılacak metni yapıştırın veya dosya seçin.');
-                    return;
-                }
-
-                const parsedResult = NotebookLMParser.parse(textInput, titleInput || 'NotebookLM Aktarılan Deste');
-                if (parsedResult.cards.length === 0) {
-                    alert('Metinden hiçbir kart ayrıştırılamadı. Lütfen Q/A veya Tablo formatında metin girin.');
-                    return;
-                }
-
-                DeckStorage.saveDeck(parsedResult);
-                this.activeDeckId = parsedResult.id;
-                DeckStorage.setActiveDeckId(this.activeDeckId);
-
-                uploadModal.classList.remove('active');
-                document.getElementById('importTextarea').value = '';
-                document.getElementById('importDeckTitle').value = '';
-
-                this.renderDeckSelectOptions();
-                this.loadActiveMode();
-
-                alert(`🎉 ${parsedResult.cards.length} adet yeni bilgi kartı başarıyla yüklendi!`);
-            });
-        }
-
-        const fileInput = document.getElementById('fileInput');
-        if (fileInput) {
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('importTextarea').value = event.target.result;
-                    if (!document.getElementById('importDeckTitle').value) {
-                        document.getElementById('importDeckTitle').value = file.name.replace(/\.[^/.]+$/, "");
-                    }
-                };
-                reader.readAsText(file);
-            });
-        }
     }
 
     loadActiveMode() {
+        this.renderDeckSelectOptions();
+
         const modeContainer = document.getElementById('modeContainer');
         if (!modeContainer) return;
 
         const activeDeck = DeckStorage.getDeckById(this.activeDeckId);
 
         switch (this.activeMode) {
+            case 'multiplechoice':
+                this.activeModeInstance = new MultipleChoiceMode(modeContainer, activeDeck);
+                break;
             case 'flashcard':
                 this.activeModeInstance = new FlashcardMode(modeContainer, activeDeck);
-                break;
-            case 'truefalse':
-                this.activeModeInstance = new TrueFalseMode(modeContainer, activeDeck);
                 break;
             case 'match':
                 this.activeModeInstance = new MatchMode(modeContainer, activeDeck);
@@ -8241,10 +10313,8 @@ class FlashcardApp {
                 this.renderDeckManager(modeContainer, activeDeck);
                 break;
             default:
-                this.activeModeInstance = new FlashcardMode(modeContainer, activeDeck);
+                this.activeModeInstance = new MultipleChoiceMode(modeContainer, activeDeck);
         }
-
-        this.updateGlobalStats();
     }
 
     renderDeckManager(container, deck) {
@@ -8328,14 +10398,6 @@ class FlashcardApp {
                 this.renderDeckManager(container, deck);
             });
         });
-    }
-
-    updateGlobalStats() {
-        const stats = DeckStorage.getStats();
-        const displayEl = document.getElementById('globalStatsDisplay');
-        if (displayEl) {
-            displayEl.innerHTML = `🔥 Toplam Çalışılan: <strong>${stats.totalStudied}</strong> | Öğrenilen: <strong>${stats.masteredCount}</strong>`;
-        }
     }
 }
 
