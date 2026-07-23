@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NotebookLM Bilgi Kartları - İnteraktif Öğrenme Platformu</title>
-    <meta name="description" content="NotebookLM özet ve bilgi kartlarınızı kolayca yükleyip 3D kartlar, testler ve eşleştirme oyunlarıyla çalışabileceğiniz modern web platformu.">
+    <meta name="description" content="NotebookLM özet ve bilgi kartlarınızı kolayca yükleyip 3D kartlar, Doğru/Yanlış testleri ve eşleştirme oyunlarıyla çalışabileceğiniz modern web platformu.">
     <style>
 /* ==========================================================================
    NotebookLM Flashcards - Design System & CSS
@@ -925,6 +925,150 @@ body {
     .card-item-row { flex-direction: column; }
 }
 
+
+/* ==========================================================================
+   TRUE / FALSE MODE STYLES
+   ========================================================================== */
+
+.tf-mode-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.tf-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    padding: 0.85rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+}
+
+.tf-score-badge {
+    display: flex;
+    gap: 1.5rem;
+    font-weight: 600;
+}
+
+.tf-card-box {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--glass-border);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.tf-card-box.correct-border {
+    border-color: var(--emerald-accent);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+}
+
+.tf-card-box.wrong-border {
+    border-color: var(--rose-accent);
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);
+}
+
+.tf-question-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #ffffff;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+}
+
+.tf-proposed-answer-box {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--glass-border);
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+}
+
+.tf-label {
+    font-size: 0.85rem;
+    color: var(--cyan-accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tf-proposed-text {
+    font-size: 1.15rem;
+    margin-top: 0.5rem;
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+.tf-feedback-msg {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    font-size: 1.05rem;
+    line-height: 1.4;
+}
+
+.tf-feedback-msg.success {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--emerald-accent);
+    color: #6ee7b7;
+}
+
+.tf-feedback-msg.error {
+    background: rgba(244, 63, 94, 0.2);
+    border: 1px solid var(--rose-accent);
+    color: #fca5a5;
+}
+
+.tf-action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    transition: opacity 0.2s ease;
+}
+
+.tf-btn {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 1.2rem;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #ffffff;
+}
+
+.tf-btn.true-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.tf-btn.true-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(16, 185, 129, 0.5);
+}
+
+.tf-btn.false-btn {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    box-shadow: 0 8px 20px rgba(244, 63, 94, 0.3);
+}
+
+.tf-btn.false-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(244, 63, 94, 0.5);
+}
+
     </style>
 </head>
 <body>
@@ -934,7 +1078,7 @@ body {
             <div class="logo-area">
                 <span class="logo-icon">🎴</span>
                 <h1>NotebookLM Kartları</h1>
-                <span class="badge-tag">v2.5 (992 Kart)</span>
+                <span class="badge-tag">v3.0 (Doğru/Yanlış Modlu)</span>
             </div>
             <div class="header-actions">
                 <button class="ctrl-btn secondary-btn" style="margin-right: 12px; font-size: 0.85rem;" onclick="DeckStorage.forceResetDecks();">
@@ -970,8 +1114,8 @@ body {
             <button class="tab-btn active" data-mode="flashcard">
                 <span>🎴</span> 3D Kart Modu
             </button>
-            <button class="tab-btn" data-mode="quiz">
-                <span>📝</span> Test Modu (Quiz)
+            <button class="tab-btn" data-mode="truefalse">
+                <span>⚡</span> Doğru / Yanlış
             </button>
             <button class="tab-btn" data-mode="match">
                 <span>🧩</span> Eşleştirme Oyunu
@@ -988,7 +1132,7 @@ body {
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>NotebookLM Bilgi Kartı Platformu • v2.5 Güncel (992 Kart)</p>
+            <p>NotebookLM Bilgi Kartı Platformu • v3.0 Doğru/Yanlış Modlu (992 Kart)</p>
         </footer>
     </div>
 
@@ -7230,7 +7374,7 @@ const STORAGE_KEY = 'notebooklm_flashcards_decks';
 const ACTIVE_DECK_KEY = 'notebooklm_active_deck_id';
 const STATS_KEY = 'notebooklm_study_stats';
 const VERSION_KEY = 'notebooklm_app_version';
-const CURRENT_VERSION = '2.5_992_cards_v3';
+const CURRENT_VERSION = '3.0_true_false_mode';
 
 class DeckStorage {
     static checkAndMigrateVersion() {
@@ -7576,215 +7720,184 @@ if (typeof module !== 'undefined' && module.exports) {
 
     </script>
     <script>
-/**
- * Multiple Choice Quiz Mode Controller
- */
-class QuizMode {
-    constructor(containerEl) {
-        this.container = containerEl;
-        this.deck = null;
-        this.questions = [];
+
+class TrueFalseMode {
+    constructor(container, deck) {
+        this.container = container;
+        this.deck = deck;
+        this.cards = deck ? [...deck.cards] : [];
         this.currentIndex = 0;
-        this.score = 0;
-        this.userAnswers = [];
-        this.isFinished = false;
+        this.score = { correct: 0, wrong: 0 };
+        this.currentQuestion = null;
+        this.answered = false;
+        
+        this.init();
     }
 
-    init(deck) {
-        this.deck = deck;
-        this.score = 0;
-        this.currentIndex = 0;
-        this.userAnswers = [];
-        this.isFinished = false;
-
-        if (!deck || !deck.cards || deck.cards.length < 2) {
+    init() {
+        if (!this.cards || this.cards.length === 0) {
             this.container.innerHTML = `
-                <div class="empty-mode-state">
-                    <div class="empty-icon">📝</div>
-                    <h3>Test Modu için En Az 2 Kart Gereklidir</h3>
-                    <p>Çoktan seçmeli test seçeneğinin hazırlanabilmesi için destede birden fazla kart olmalıdır.</p>
+                <div class="empty-state" style="text-align:center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-lg);">
+                    <h3>Bu destede henüz kart bulunmuyor.</h3>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem;">Lütfen kart yükleyin veya farklı bir deste seçin.</p>
                 </div>
             `;
             return;
         }
 
-        this.generateQuestions();
-        this.render();
+        this.cards = this.shuffleArray([...this.cards]);
+        this.currentIndex = 0;
+        this.score = { correct: 0, wrong: 0 };
+
+        this.renderStage();
+        this.loadNextQuestion();
     }
 
-    generateQuestions() {
-        const allCards = [...this.deck.cards];
-        // Kartları karıştır
-        const shuffledCards = [...allCards].sort(() => 0.5 - Math.random());
-
-        this.questions = shuffledCards.map(card => {
-            // Çeldiricileri seç (diğer kartların cevapları)
-            const wrongAnswers = allCards
-                .filter(c => c.id !== card.id)
-                .map(c => c.back)
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 3);
-
-            // Eğer yeterli çeldirici yoksa varsayılanlar ekle
-            while (wrongAnswers.length < 3) {
-                wrongAnswers.push("Diğer bir kavram / Tanımsız");
-            }
-
-            const options = [card.back, ...wrongAnswers].sort(() => 0.5 - Math.random());
-
-            return {
-                cardId: card.id,
-                question: card.front,
-                correctAnswer: card.back,
-                options: options
-            };
-        });
+    shuffleArray(arr) {
+        return arr.sort(() => Math.random() - 0.5);
     }
 
-    render() {
-        if (this.isFinished) {
-            this.renderResult();
-            return;
-        }
-
-        const q = this.questions[this.currentIndex];
-        const progressPercent = Math.round(((this.currentIndex + 1) / this.questions.length) * 100);
-        const answered = this.userAnswers[this.currentIndex];
-
+    renderStage() {
         this.container.innerHTML = `
-            <div class="quiz-mode-wrapper">
-                <div class="mode-header-bar">
-                    <div class="card-counter">
-                        Soru <span class="current-num">${this.currentIndex + 1}</span> / <span class="total-num">${this.questions.length}</span>
+            <div class="tf-mode-wrapper">
+                <div class="tf-header-bar">
+                    <div class="tf-progress-info">
+                        Soru <strong id="tfCurrentNum">1</strong> / ${this.cards.length}
                     </div>
-                    <div class="progress-container">
-                        <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
-                    </div>
-                    <div class="score-live-badge">
-                        Puan: ${this.score}
+                    <div class="tf-score-badge">
+                        <span class="correct-count" style="color: var(--emerald-accent);">✅ Doğru: <strong id="tfCorrectScore">0</strong></span>
+                        <span class="wrong-count" style="color: var(--rose-accent);">❌ Yanlış: <strong id="tfWrongScore">0</strong></span>
                     </div>
                 </div>
 
-                <div class="quiz-card-box">
-                    <div class="quiz-question-title">
-                        ${this.escapeHtml(q.question)}
+                <div class="tf-card-box" id="tfCardBox">
+                    <div class="tf-question-title" id="tfQuestionText">
+                        Soru yükleniyor...
                     </div>
-
-                    <div class="quiz-options-grid">
-                        ${q.options.map((opt, idx) => {
-                            const optionLetter = String.fromCharCode(65 + idx); // A, B, C, D
-                            let statusClass = '';
-                            
-                            if (answered !== undefined) {
-                                if (opt === q.correctAnswer) {
-                                    statusClass = 'correct-opt';
-                                } else if (opt === answered.selectedOption) {
-                                    statusClass = 'wrong-opt';
-                                } else {
-                                    statusClass = 'disabled-opt';
-                                }
-                            }
-
-                            return `
-                                <button class="quiz-option-btn ${statusClass}" 
-                                        onclick="window.quizMode.selectOption(${idx})"
-                                        ${answered !== undefined ? 'disabled' : ''}>
-                                    <span class="opt-letter">${optionLetter}</span>
-                                    <span class="opt-text">${this.escapeHtml(opt)}</span>
-                                </button>
-                            `;
-                        }).join('')}
+                    <div class="tf-proposed-answer-box" id="tfAnswerBox">
+                        <span class="tf-label">💡 Verilen Cevap / Açıklama:</span>
+                        <p class="tf-proposed-text" id="tfProposedText">...</p>
                     </div>
+                    <div class="tf-feedback-msg" id="tfFeedbackMsg" style="display:none;"></div>
                 </div>
 
-                <div class="quiz-footer-actions">
-                    ${answered !== undefined ? `
-                        <div class="feedback-msg ${answered.isCorrect ? 'positive' : 'negative'}">
-                            ${answered.isCorrect ? '🎉 Doğru Yanıt!' : '❌ Yanlış Yanıt. Doğru cevap yeşil renkle vurgulandı.'}
-                        </div>
-                        <button class="ctrl-btn primary-btn" onclick="window.quizMode.nextQuestion()">
-                            ${this.currentIndex < this.questions.length - 1 ? 'Sonraki Soru →' : 'Sonuçları Gör 🏆'}
-                        </button>
-                    ` : `
-                        <div class="quiz-hint">Devam etmek için bir seçeneği işaretleyin.</div>
-                    `}
-                </div>
-            </div>
-        `;
-    }
-
-    selectOption(index) {
-        if (this.userAnswers[this.currentIndex] !== undefined) return;
-
-        const q = this.questions[this.currentIndex];
-        const selectedOption = q.options[index];
-        const isCorrect = selectedOption === q.correctAnswer;
-
-        if (isCorrect) this.score += 10;
-
-        this.userAnswers[this.currentIndex] = {
-            selectedOption,
-            isCorrect
-        };
-
-        this.render();
-    }
-
-    nextQuestion() {
-        if (this.currentIndex < this.questions.length - 1) {
-            this.currentIndex++;
-            this.render();
-        } else {
-            this.isFinished = true;
-            this.renderResult();
-        }
-    }
-
-    renderResult() {
-        const correctCount = this.userAnswers.filter(a => a && a.isCorrect).length;
-        const total = this.questions.length;
-        const accuracy = Math.round((correctCount / total) * 100);
-
-        this.container.innerHTML = `
-            <div class="quiz-result-wrapper">
-                <div class="result-icon">${accuracy >= 70 ? '🎉' : '📚'}</div>
-                <h2>Test Tamamlandı!</h2>
-                
-                <div class="result-stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">${this.score}</div>
-                        <div class="stat-label">Toplam Puan</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">%${accuracy}</div>
-                        <div class="stat-label">Başarı Oranı</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${correctCount} / ${total}</div>
-                        <div class="stat-label">Doğru Sayısı</div>
-                    </div>
-                </div>
-
-                <div class="result-actions">
-                    <button class="ctrl-btn primary-btn" onclick="window.quizMode.init(window.quizMode.deck)">
-                        🔄 Testi Tekrar Başlat
+                <div class="tf-action-buttons" id="tfActionBtns">
+                    <button class="tf-btn true-btn" id="btnTrue">
+                        ✅ DOĞRU
+                    </button>
+                    <button class="tf-btn false-btn" id="btnFalse">
+                        ❌ YANLIŞ
                     </button>
                 </div>
             </div>
         `;
 
-        DeckStorage.recordStudySession(total, correctCount);
+        document.getElementById('btnTrue').addEventListener('click', () => this.handleUserAnswer(true));
+        document.getElementById('btnFalse').addEventListener('click', () => this.handleUserAnswer(false));
     }
 
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.innerText = text;
-        return div.innerHTML;
-    }
-}
+    loadNextQuestion() {
+        if (this.currentIndex >= this.cards.length) {
+            this.showResults();
+            return;
+        }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { QuizMode };
+        this.answered = false;
+        const currentCard = this.cards[this.currentIndex];
+        
+        // 50% ihtimalle DOĞRU cevabı göster, 50% ihtimalle başka bir kartın YANLIŞ cevabını göster
+        const isActuallyTrue = Math.random() < 0.5;
+
+        let displayedAnswer = currentCard.back;
+        if (!isActuallyTrue && this.cards.length > 1) {
+            const otherCards = this.cards.filter(c => c.id !== currentCard.id);
+            const randomOther = otherCards[Math.floor(Math.random() * otherCards.length)];
+            displayedAnswer = randomOther.back;
+        }
+
+        this.currentQuestion = {
+            card: currentCard,
+            displayedAnswer: displayedAnswer,
+            isActuallyTrue: isActuallyTrue,
+            realAnswer: currentCard.back
+        };
+
+        document.getElementById('tfCurrentNum').textContent = this.currentIndex + 1;
+        document.getElementById('tfQuestionText').textContent = currentCard.front;
+        document.getElementById('tfProposedText').textContent = displayedAnswer;
+        
+        const feedbackEl = document.getElementById('tfFeedbackMsg');
+        feedbackEl.style.display = 'none';
+        feedbackEl.className = 'tf-feedback-msg';
+
+        const cardBox = document.getElementById('tfCardBox');
+        cardBox.className = 'tf-card-box';
+
+        const actionBtns = document.getElementById('tfActionBtns');
+        actionBtns.style.pointerEvents = 'auto';
+        actionBtns.style.opacity = '1';
+    }
+
+    handleUserAnswer(userSaidTrue) {
+        if (this.answered) return;
+        this.answered = true;
+
+        const isCorrectChoice = (userSaidTrue === this.currentQuestion.isActuallyTrue);
+        
+        const cardBox = document.getElementById('tfCardBox');
+        const feedbackEl = document.getElementById('tfFeedbackMsg');
+        const actionBtns = document.getElementById('tfActionBtns');
+        
+        actionBtns.style.pointerEvents = 'none';
+        actionBtns.style.opacity = '0.5';
+
+        if (isCorrectChoice) {
+            this.score.correct++;
+            document.getElementById('tfCorrectScore').textContent = this.score.correct;
+            cardBox.classList.add('correct-border');
+            feedbackEl.className = 'tf-feedback-msg success';
+            feedbackEl.innerHTML = `🎉 <strong>Tebrikler, Doğru Bildiniz!</strong>`;
+        } else {
+            this.score.wrong++;
+            document.getElementById('tfWrongScore').textContent = this.score.wrong;
+            cardBox.classList.add('wrong-border');
+            feedbackEl.className = 'tf-feedback-msg error';
+            feedbackEl.innerHTML = `❌ <strong>Yanlış!</strong> Verilen bilgi ${this.currentQuestion.isActuallyTrue ? 'Doğruydu' : 'Yanlıştı'}.<br>👉 Gerçek Cevap: <em>${this.currentQuestion.realAnswer}</em>`;
+        }
+
+        feedbackEl.style.display = 'block';
+
+        DeckStorage.recordStudySession(1, isCorrectChoice ? 1 : 0);
+
+        setTimeout(() => {
+            this.currentIndex++;
+            this.loadNextQuestion();
+        }, 1700);
+    }
+
+    showResults() {
+        const total = this.cards.length;
+        const percent = Math.round((this.score.correct / total) * 100) || 0;
+
+        this.container.innerHTML = `
+            <div class="quiz-results-box" style="max-width: 600px; margin: 2rem auto; text-align: center; background: var(--bg-card); padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--glass-border);">
+                <h2>🎉 Doğru / Yanlış Testi Tamamlandı!</h2>
+                <div style="font-size: 3.5rem; margin: 1.5rem 0;">
+                    ${percent >= 70 ? '🏆' : '📚'}
+                </div>
+                <p style="font-size: 1.25rem; margin-bottom: 1rem;">Başarı Oranınız: <strong>%${percent}</strong></p>
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; font-size: 1.15rem;">
+                    <span style="color: var(--emerald-accent);">✅ Doğru: <strong>${this.score.correct}</strong></span>
+                    <span style="color: var(--rose-accent);">❌ Yanlış: <strong>${this.score.wrong}</strong></span>
+                </div>
+                <button class="ctrl-btn primary-btn" id="restartTFBtn">
+                    🔄 Testi Tekrar Başlat
+                </button>
+            </div>
+        `;
+
+        document.getElementById('restartTFBtn').addEventListener('click', () => this.init());
+    }
 }
 
     </script>
@@ -7959,361 +8072,276 @@ if (typeof module !== 'undefined' && module.exports) {
 
     </script>
     <script>
-/**
- * NotebookLM Flashcards Main Application Controller
- */
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new NotebookLMApp();
-});
 
-class NotebookLMApp {
+class FlashcardApp {
     constructor() {
-        this.decks = [];
-        this.activeDeck = null;
-        this.activeMode = 'flashcard'; // 'flashcard', 'quiz', 'match', 'manage'
-        
-        // Mode controllers
-        this.flashcardMode = new FlashcardMode(document.getElementById('modeContainer'));
-        this.quizMode = new QuizMode(document.getElementById('modeContainer'));
-        this.matchMode = new MatchMode(document.getElementById('modeContainer'));
-
-        // Global access
-        window.flashcardMode = this.flashcardMode;
-        window.quizMode = this.quizMode;
-        window.matchMode = this.matchMode;
+        this.activeMode = 'flashcard';
+        this.activeDeckId = null;
+        this.activeModeInstance = null;
 
         this.init();
     }
 
     init() {
-        this.loadDecks();
+        this.activeDeckId = DeckStorage.getActiveDeckId();
+
+        this.renderDeckSelectOptions();
         this.setupEventListeners();
-        this.setupKeyboardShortcuts();
-        this.renderDeckSelector();
-        this.switchMode(this.activeMode);
-        this.updateStatsDisplay();
+        this.updateGlobalStats();
+        this.loadActiveMode();
     }
 
-    loadDecks() {
-        this.decks = DeckStorage.getDecks();
-        const activeId = DeckStorage.getActiveDeckId();
-        this.activeDeck = (activeId ? this.decks.find(d => d.id === activeId) : null) || this.decks[0] || null;
-        if (this.activeDeck) {
-            DeckStorage.setActiveDeckId(this.activeDeck.id);
-        }
-    }
-
-    renderDeckSelector() {
+    renderDeckSelectOptions() {
+        const decks = DeckStorage.getDecks();
         const selectEl = document.getElementById('deckSelect');
+        const descEl = document.getElementById('deckDesc');
+
         if (!selectEl) return;
 
-        selectEl.innerHTML = this.decks.map(d => `
-            <option value="${d.id}" ${this.activeDeck && d.id === this.activeDeck.id ? 'selected' : ''}>
-                ${this.escapeHtml(d.title)} (${d.cards.length} kart)
-            </option>
-        `).join('');
-
-        // Deste Açıklamasını Güncelle
-        const descEl = document.getElementById('deckDesc');
-        if (descEl && this.activeDeck) {
-            descEl.innerText = this.activeDeck.description || `${this.activeDeck.cards.length} adet bilgi kartı`;
-        }
-    }
-
-    switchDeck(deckId) {
-        const found = this.decks.find(d => d.id === deckId);
-        if (found) {
-            this.activeDeck = found;
-            DeckStorage.setActiveDeckId(deckId);
-            this.renderDeckSelector();
-            this.switchMode(this.activeMode);
-        }
-    }
-
-    switchMode(modeName) {
-        this.activeMode = modeName;
-
-        // Tab Butonlarını Güncelle
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.mode === modeName);
+        selectEl.innerHTML = '';
+        decks.forEach(deck => {
+            const option = document.createElement('option');
+            option.value = deck.id;
+            option.textContent = `${deck.title} (${deck.cards.length} kart)`;
+            if (deck.id === this.activeDeckId) {
+                option.selected = true;
+            }
+            selectEl.appendChild(option);
         });
 
-        const container = document.getElementById('modeContainer');
-        if (!container) return;
-
-        if (!this.activeDeck || !this.activeDeck.cards || this.activeDeck.cards.length === 0) {
-            container.innerHTML = `
-                <div class="empty-mode-state">
-                    <div class="empty-icon">📂</div>
-                    <h3>Bu Deste Boş</h3>
-                    <p>Yukarıdaki "+ NotebookLM Kart Yükle" butonuna tıklayarak metin veya dosya yükleyebilirsiniz.</p>
-                </div>
-            `;
-            return;
-        }
-
-        if (modeName === 'flashcard') {
-            this.flashcardMode.init(this.activeDeck);
-        } else if (modeName === 'quiz') {
-            this.quizMode.init(this.activeDeck);
-        } else if (modeName === 'match') {
-            this.matchMode.init(this.activeDeck);
-        } else if (modeName === 'manage') {
-            this.renderDeckManager(container);
+        const activeDeck = DeckStorage.getDeckById(this.activeDeckId);
+        if (activeDeck) {
+            descEl.textContent = activeDeck.description || `${activeDeck.cards.length} kart içeriyor.`;
         }
     }
 
-    renderDeckManager(container) {
-        if (!this.activeDeck) return;
+    setupEventListeners() {
+        const selectEl = document.getElementById('deckSelect');
+        if (selectEl) {
+            selectEl.addEventListener('change', (e) => {
+                this.activeDeckId = e.target.value;
+                DeckStorage.setActiveDeckId(this.activeDeckId);
+                
+                const activeDeck = DeckStorage.getDeckById(this.activeDeckId);
+                if (activeDeck) {
+                    document.getElementById('deckDesc').textContent = activeDeck.description || `${activeDeck.cards.length} kart içeriyor.`;
+                }
+
+                this.loadActiveMode();
+            });
+        }
+
+        const tabBtns = document.querySelectorAll('.mode-tabs .tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                this.activeMode = btn.getAttribute('data-mode');
+                this.loadActiveMode();
+            });
+        });
+
+        const openModalBtn = document.getElementById('openUploadModalBtn');
+        const closeModalBtn = document.getElementById('closeUploadModalBtn');
+        const uploadModal = document.getElementById('uploadModal');
+        const processImportBtn = document.getElementById('processImportBtn');
+        const newDeckBtn = document.getElementById('newDeckBtn');
+
+        if (openModalBtn) openModalBtn.addEventListener('click', () => uploadModal.classList.add('active'));
+        if (closeModalBtn) closeModalBtn.addEventListener('click', () => uploadModal.classList.remove('active'));
+
+        if (newDeckBtn) {
+            newDeckBtn.addEventListener('click', () => {
+                const title = prompt('Yeni Deste Başlığı:');
+                if (title && title.trim() !== '') {
+                    const newDeck = {
+                        id: 'deck-' + Date.now(),
+                        title: title.trim(),
+                        description: 'Özel oluşturulan yeni deste',
+                        category: 'Genel',
+                        createdAt: new Date().toISOString(),
+                        cards: []
+                    };
+                    DeckStorage.saveDeck(newDeck);
+                    this.activeDeckId = newDeck.id;
+                    DeckStorage.setActiveDeckId(this.activeDeckId);
+                    this.renderDeckSelectOptions();
+                    this.loadActiveMode();
+                }
+            });
+        }
+
+        if (processImportBtn) {
+            processImportBtn.addEventListener('click', () => {
+                const titleInput = document.getElementById('importDeckTitle').value.trim();
+                const textInput = document.getElementById('importTextarea').value;
+
+                if (!textInput.trim()) {
+                    alert('Lütfen içe aktarılacak metni yapıştırın veya dosya seçin.');
+                    return;
+                }
+
+                const parsedResult = NotebookLMParser.parse(textInput, titleInput || 'NotebookLM Aktarılan Deste');
+                if (parsedResult.cards.length === 0) {
+                    alert('Metinden hiçbir kart ayrıştırılamadı. Lütfen Q/A veya Tablo formatında metin girin.');
+                    return;
+                }
+
+                DeckStorage.saveDeck(parsedResult);
+                this.activeDeckId = parsedResult.id;
+                DeckStorage.setActiveDeckId(this.activeDeckId);
+
+                uploadModal.classList.remove('active');
+                document.getElementById('importTextarea').value = '';
+                document.getElementById('importDeckTitle').value = '';
+
+                this.renderDeckSelectOptions();
+                this.loadActiveMode();
+
+                alert(`🎉 ${parsedResult.cards.length} adet yeni bilgi kartı başarıyla yüklendi!`);
+            });
+        }
+
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('importTextarea').value = event.target.result;
+                    if (!document.getElementById('importDeckTitle').value) {
+                        document.getElementById('importDeckTitle').value = file.name.replace(/\.[^/.]+$/, "");
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
+    }
+
+    loadActiveMode() {
+        const modeContainer = document.getElementById('modeContainer');
+        if (!modeContainer) return;
+
+        const activeDeck = DeckStorage.getDeckById(this.activeDeckId);
+
+        switch (this.activeMode) {
+            case 'flashcard':
+                this.activeModeInstance = new FlashcardMode(modeContainer, activeDeck);
+                break;
+            case 'truefalse':
+                this.activeModeInstance = new TrueFalseMode(modeContainer, activeDeck);
+                break;
+            case 'match':
+                this.activeModeInstance = new MatchMode(modeContainer, activeDeck);
+                break;
+            case 'manage':
+                this.renderDeckManager(modeContainer, activeDeck);
+                break;
+            default:
+                this.activeModeInstance = new FlashcardMode(modeContainer, activeDeck);
+        }
+
+        this.updateGlobalStats();
+    }
+
+    renderDeckManager(container, deck) {
+        if (!deck) {
+            container.innerHTML = '<div class="empty-state"><p>Deste bulunamadı.</p></div>';
+            return;
+        }
 
         container.innerHTML = `
             <div class="deck-manager-wrapper">
                 <div class="manager-actions-header">
-                    <h3>Deste Kartları: ${this.escapeHtml(this.activeDeck.title)}</h3>
+                    <div>
+                        <h2>⚙️ Deste Yönetimi: ${deck.title}</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Toplam ${deck.cards.length} kart</p>
+                    </div>
                     <div class="action-btn-group">
-                        <button class="ctrl-btn secondary-btn" onclick="window.app.addSingleCard()">
-                            ➕ Yeni Kart Ekle
-                        </button>
-                        <button class="ctrl-btn secondary-btn" onclick="window.app.exportActiveJSON()">
-                            💾 JSON İndir
-                        </button>
-                        <button class="ctrl-btn secondary-btn" onclick="window.app.exportActiveCSV()">
-                            📊 CSV İndir
-                        </button>
-                        <button class="ctrl-btn danger-btn" onclick="window.app.deleteActiveDeck()">
-                            🗑️ Desteyi Sil
-                        </button>
+                        <button class="ctrl-btn secondary-btn" id="exportCSVBtn">📥 CSV İndir</button>
+                        <button class="ctrl-btn secondary-btn" id="exportJSONBtn">📥 JSON İndir</button>
+                        <button class="ctrl-btn danger-btn" id="deleteDeckBtn">🗑️ Desteyi Sil</button>
                     </div>
                 </div>
 
-                <div class="cards-list">
-                    ${this.activeDeck.cards.map((card, idx) => `
-                        <div class="card-item-row" id="card-row-${card.id}">
-                            <div class="card-col front-col">
-                                <label>Soru / Kavram</label>
-                                <textarea onchange="window.app.updateCardText('${card.id}', 'front', this.value)">${this.escapeHtml(card.front)}</textarea>
+                <div class="add-card-row" style="display:flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <input type="text" id="newFrontInput" class="text-input" placeholder="Soru / Kavram..." style="flex:1;">
+                    <input type="text" id="newBackInput" class="text-input" placeholder="Cevap / Açıklama..." style="flex:1;">
+                    <button class="ctrl-btn primary-btn" id="addSingleCardBtn">+ Kart Ekle</button>
+                </div>
+
+                <div class="cards-list-table">
+                    ${deck.cards.map((c, idx) => `
+                        <div class="card-item-row" style="display:flex; justify-content:space-between; align-items:center; background:rgba(15,23,42,0.5); padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); margin-bottom:0.5rem;">
+                            <div style="flex:1; margin-right:1rem;">
+                                <strong>#${idx + 1} Soru:</strong> ${c.front}<br>
+                                <span style="color:var(--text-muted); font-size:0.9rem;"><strong>Cevap:</strong> ${c.back}</span>
                             </div>
-                            <div class="card-col back-col">
-                                <label>Cevap / Açıklama</label>
-                                <textarea onchange="window.app.updateCardText('${card.id}', 'back', this.value)">${this.escapeHtml(card.back)}</textarea>
-                            </div>
-                            <div class="card-col action-col">
-                                <button class="delete-card-btn" title="Kartı Sil" onclick="window.app.deleteCard('${card.id}')">
-                                    ❌
-                                </button>
-                            </div>
+                            <button class="ctrl-btn danger-btn remove-card-btn" data-card-id="${c.id}" style="padding:0.4rem 0.8rem; font-size:0.85rem;">Sil</button>
                         </div>
                     `).join('')}
                 </div>
             </div>
         `;
-    }
 
-    addSingleCard() {
-        if (!this.activeDeck) return;
-        const newCard = {
-            id: 'c_' + Date.now(),
-            front: 'Yeni Soru / Kavram',
-            back: 'Açıklama veya Cevap metni',
-            mastered: false
-        };
-        this.activeDeck.cards.unshift(newCard);
-        DeckStorage.saveDeck(this.activeDeck);
-        this.switchMode('manage');
-    }
-
-    updateCardText(cardId, field, value) {
-        if (!this.activeDeck) return;
-        const card = this.activeDeck.cards.find(c => c.id === cardId);
-        if (card) {
-            card[field] = value.trim();
-            DeckStorage.saveDeck(this.activeDeck);
-        }
-    }
-
-    deleteCard(cardId) {
-        if (!this.activeDeck) return;
-        this.activeDeck.cards = this.activeDeck.cards.filter(c => c.id !== cardId);
-        DeckStorage.saveDeck(this.activeDeck);
-        this.switchMode('manage');
-    }
-
-    deleteActiveDeck() {
-        if (!this.activeDeck) return;
-        if (confirm(`"${this.activeDeck.title}" destesini silmek istediğinize emin misiniz?`)) {
-            DeckStorage.deleteDeck(this.activeDeck.id);
-            this.loadDecks();
-            this.renderDeckSelector();
-            this.switchMode('flashcard');
-        }
-    }
-
-    exportActiveJSON() {
-        if (this.activeDeck) DeckStorage.exportDeckJSON(this.activeDeck);
-    }
-
-    exportActiveCSV() {
-        if (this.activeDeck) DeckStorage.exportDeckCSV(this.activeDeck);
-    }
-
-    setupEventListeners() {
-        // Deste Seçim Eventi
-        const selectEl = document.getElementById('deckSelect');
-        if (selectEl) {
-            selectEl.addEventListener('change', (e) => this.switchDeck(e.target.value));
-        }
-
-        // Tab Butonları
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.switchMode(btn.dataset.mode));
+        document.getElementById('exportCSVBtn').addEventListener('click', () => DeckStorage.exportDeckCSV(deck));
+        document.getElementById('exportJSONBtn').addEventListener('click', () => DeckStorage.exportDeckJSON(deck));
+        document.getElementById('deleteDeckBtn').addEventListener('click', () => {
+            if (confirm(`"${deck.title}" destesini silmek istediğinizden emin misiniz?`)) {
+                DeckStorage.deleteDeck(deck.id);
+                this.activeDeckId = DeckStorage.getActiveDeckId();
+                this.renderDeckSelectOptions();
+                this.loadActiveMode();
+            }
         });
 
-        // Modallar
-        const uploadModal = document.getElementById('uploadModal');
-        const openUploadBtn = document.getElementById('openUploadModalBtn');
-        const closeUploadBtn = document.getElementById('closeUploadModalBtn');
+        document.getElementById('addSingleCardBtn').addEventListener('click', () => {
+            const front = document.getElementById('newFrontInput').value.trim();
+            const back = document.getElementById('newBackInput').value.trim();
 
-        if (openUploadBtn && uploadModal) {
-            openUploadBtn.addEventListener('click', () => uploadModal.classList.add('active'));
-        }
-        if (closeUploadBtn && uploadModal) {
-            closeUploadBtn.addEventListener('click', () => uploadModal.classList.remove('active'));
-        }
+            if (!front || !back) {
+                alert('Lütfen hem Soru hem Cevap kısmını doldurun.');
+                return;
+            }
 
-        // Metin Yapıştırarak Kart Yükle
-        const processImportBtn = document.getElementById('processImportBtn');
-        if (processImportBtn) {
-            processImportBtn.addEventListener('click', () => this.handleImport());
-        }
-
-        // Dosya Yükleme Eventi (Drag & Drop / File Input)
-        const fileInput = document.getElementById('fileInput');
-        if (fileInput) {
-            fileInput.addEventListener('change', (e) => this.handleFileUpload(e.target.files[0]));
-        }
-
-        // Yeni Boş Deste Oluştur
-        const newDeckBtn = document.getElementById('newDeckBtn');
-        if (newDeckBtn) {
-            newDeckBtn.addEventListener('click', () => {
-                const title = prompt('Yeni Deste Adını Girin:');
-                if (title && title.trim()) {
-                    const newDeck = {
-                        id: 'deck_' + Date.now(),
-                        title: title.trim(),
-                        description: 'NotebookLM Bilgi Kartları',
-                        createdAt: new Date().toISOString(),
-                        cards: []
-                    };
-                    DeckStorage.saveDeck(newDeck);
-                    this.loadDecks();
-                    this.switchDeck(newDeck.id);
-                }
+            deck.cards.push({
+                id: 'c_' + Date.now(),
+                front: front,
+                back: back,
+                mastered: false
             });
-        }
-    }
 
-    handleImport() {
-        const titleInput = document.getElementById('importDeckTitle');
-        const textInput = document.getElementById('importTextarea');
+            DeckStorage.saveDeck(deck);
+            this.renderDeckSelectOptions();
+            this.renderDeckManager(container, deck);
+        });
 
-        const title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : 'NotebookLM İçe Aktarılan Deste';
-        const text = textInput ? textInput.value : '';
-
-        if (!text || !text.trim()) {
-            alert('Lütfen NotebookLM\'den kopyaladığınız metni yapıştırın!');
-            return;
-        }
-
-        const parsedCards = NotebookLMParser.parse(text);
-
-        if (parsedCards.length === 0) {
-            alert('Metin çözümlenemedi. Lütfen metnin "Soru: Cevap", "Kavram - Açıklama" veya Tablo biçiminde olduğunu kontrol edin.');
-            return;
-        }
-
-        const newDeck = {
-            id: 'deck_' + Date.now(),
-            title: title,
-            description: `NotebookLM'den ${parsedCards.length} kart aktarıldı`,
-            createdAt: new Date().toISOString(),
-            cards: parsedCards.map((c, i) => ({ id: `c_${i}_${Date.now()}`, front: c.front, back: c.back, mastered: false }))
-        };
-
-        DeckStorage.saveDeck(newDeck);
-        this.loadDecks();
-        this.switchDeck(newDeck.id);
-
-        // Modalı kapat ve formu temizle
-        document.getElementById('uploadModal').classList.remove('active');
-        textInput.value = '';
-        if (titleInput) titleInput.value = '';
-        alert(`Başarılı! ${parsedCards.length} adet kart yeni desteye eklendi.`);
-    }
-
-    handleFileUpload(file) {
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const content = e.target.result;
-            const parsedCards = NotebookLMParser.parse(content);
-
-            if (parsedCards.length > 0) {
-                const deckTitle = file.name.replace(/\.[^/.]+$/, "") || "Yüklenen Deste";
-                const newDeck = {
-                    id: 'deck_' + Date.now(),
-                    title: deckTitle,
-                    description: `Dosyadan aktarıldı (${file.name})`,
-                    createdAt: new Date().toISOString(),
-                    cards: parsedCards.map((c, i) => ({ id: `c_${i}_${Date.now()}`, front: c.front, back: c.back, mastered: false }))
-                };
-                DeckStorage.saveDeck(newDeck);
-                this.loadDecks();
-                this.switchDeck(newDeck.id);
-                document.getElementById('uploadModal').classList.remove('active');
-                alert(`Başarılı! ${file.name} dosyasından ${parsedCards.length} kart okundu.`);
-            } else {
-                alert('Dosyadaki veriler çözümlenemedi.');
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    setupKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
-            if (this.activeMode === 'flashcard') {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    this.flashcardMode.toggleFlip();
-                } else if (e.code === 'ArrowRight') {
-                    this.flashcardMode.nextCard();
-                } else if (e.code === 'ArrowLeft') {
-                    this.flashcardMode.prevCard();
-                } else if (e.code === 'KeyM') {
-                    this.flashcardMode.toggleMastered();
-                }
-            }
+        container.querySelectorAll('.remove-card-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const cardId = e.target.getAttribute('data-card-id');
+                deck.cards = deck.cards.filter(c => c.id !== cardId);
+                DeckStorage.saveDeck(deck);
+                this.renderDeckSelectOptions();
+                this.renderDeckManager(container, deck);
+            });
         });
     }
 
-    updateStatsDisplay() {
+    updateGlobalStats() {
         const stats = DeckStorage.getStats();
-        const statEl = document.getElementById('globalStatsDisplay');
-        if (statEl) {
-            statEl.innerHTML = `🔥 Toplam Çalışılan: <strong>${stats.totalStudied}</strong> | Öğrenilen: <strong>${stats.masteredCount}</strong>`;
+        const displayEl = document.getElementById('globalStatsDisplay');
+        if (displayEl) {
+            displayEl.innerHTML = `🔥 Toplam Çalışılan: <strong>${stats.totalStudied}</strong> | Öğrenilen: <strong>${stats.masteredCount}</strong>`;
         }
-    }
-
-    escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.innerText = text;
-        return div.innerHTML;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new FlashcardApp();
+});
 
     </script>
 </body>
