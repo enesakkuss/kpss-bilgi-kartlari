@@ -1023,7 +1023,7 @@ body {
         </div>
     </div>
 
-    <!-- Tüm Modüller ve 537 Kart Tek Bir Bağımsız HTML İçinde Gömülür -->
+    <!-- Örnek Kartlar ve Tüm Mantık Tam Bağımsız Entegre Edilir -->
     <script>
         const SAMPLE_DECKS = [
     {
@@ -4492,18 +4492,12 @@ if (typeof module !== 'undefined' && module.exports) {
 
     </script>
     <script>
-/**
- * LocalStorage & Data Manager for NotebookLM Flashcards
- */
+
 const STORAGE_KEY = 'notebooklm_flashcards_decks';
 const ACTIVE_DECK_KEY = 'notebooklm_active_deck_id';
 const STATS_KEY = 'notebooklm_study_stats';
 
 class DeckStorage {
-    /**
-     * Tüm desteleri getirir ve Türkçe karakter bozulmalarını otomatik onarır.
-     * @returns {Array}
-     */
     static getDecks() {
         try {
             const data = localStorage.getItem(STORAGE_KEY);
@@ -4512,40 +4506,22 @@ class DeckStorage {
                 savedDecks = JSON.parse(data);
             }
 
+            // Bozuk metin kontrolü
             const isCorrupted = (str) => str && (str.includes('Ã') || str.includes('Å') || str.includes('Â') || str.includes('½'));
 
-            let needsReset = !data;
-            if (savedDecks.length > 0) {
+            let needsReset = !data || !Array.isArray(savedDecks) || savedDecks.length === 0;
+
+            if (!needsReset) {
                 savedDecks.forEach(d => {
-                    if (isCorrupted(d.title) || isCorrupted(d.category) || isCorrupted(d.description)) {
-                        needsReset = true;
-                    }
+                    if (isCorrupted(d.title) || isCorrupted(d.category)) needsReset = true;
                 });
             }
 
-            if (needsReset && typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {
-                savedDecks = SAMPLE_DECKS;
+            // Eğer hafıza boşsa veya 5 ana deste tam değilse SAMPLE_DECKS ile otomatik doldur
+            if (needsReset || (savedDecks.length < 5 && typeof SAMPLE_DECKS !== 'undefined')) {
+                savedDecks = (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) ? SAMPLE_DECKS : [];
                 this.saveDecks(savedDecks);
                 return savedDecks;
-            }
-
-            // Koddaki güncel desteleri eşitle
-            if (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {
-                let hasUpdates = false;
-                SAMPLE_DECKS.forEach(sample => {
-                    const existingIndex = savedDecks.findIndex(d => d.id === sample.id);
-                    if (existingIndex === -1) {
-                        savedDecks.push(sample);
-                        hasUpdates = true;
-                    } else {
-                        // Başlık ve kartları her zaman temiz UTF-8 versiyonla güncelle
-                        savedDecks[existingIndex] = sample;
-                        hasUpdates = true;
-                    }
-                });
-                if (hasUpdates) {
-                    this.saveDecks(savedDecks);
-                }
             }
 
             return savedDecks;
@@ -4555,10 +4531,6 @@ class DeckStorage {
         }
     }
 
-    /**
-     * Tüm desteleri kaydeder.
-     * @param {Array} decks 
-     */
     static saveDecks(decks) {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
@@ -4567,20 +4539,11 @@ class DeckStorage {
         }
     }
 
-    /**
-     * ID'ye göre tek deste getirir.
-     * @param {string} deckId 
-     * @returns {Object|null}
-     */
     static getDeckById(deckId) {
         const decks = this.getDecks();
         return decks.find(d => d.id === deckId) || null;
     }
 
-    /**
-     * Yeni bir deste ekler veya var olanı günceller.
-     * @param {Object} deck 
-     */
     static saveDeck(deck) {
         const decks = this.getDecks();
         const index = decks.findIndex(d => d.id === deck.id);
@@ -4592,19 +4555,12 @@ class DeckStorage {
         this.saveDecks(decks);
     }
 
-    /**
-     * Deste siler.
-     * @param {string} deckId 
-     */
     static deleteDeck(deckId) {
         let decks = this.getDecks();
         decks = decks.filter(d => d.id !== deckId);
         this.saveDecks(decks);
     }
 
-    /**
-     * Aktif deste ID'sini al/ayarla.
-     */
     static getActiveDeckId() {
         const decks = this.getDecks();
         const savedId = localStorage.getItem(ACTIVE_DECK_KEY);
@@ -4618,10 +4574,6 @@ class DeckStorage {
         localStorage.setItem(ACTIVE_DECK_KEY, deckId);
     }
 
-    /**
-     * Deste dışa aktarma (JSON indir)
-     * @param {Object} deck 
-     */
     static exportDeckJSON(deck) {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(deck, null, 2));
         const downloadAnchor = document.createElement('a');
@@ -4632,10 +4584,6 @@ class DeckStorage {
         downloadAnchor.remove();
     }
 
-    /**
-     * Deste dışa aktarma (CSV indir)
-     * @param {Object} deck 
-     */
     static exportDeckCSV(deck) {
         let csvContent = "data:text/csv;charset=utf-8,Soru/Kavram,Cevap/Açıklama\n";
         deck.cards.forEach(card => {
@@ -4653,9 +4601,6 @@ class DeckStorage {
         link.remove();
     }
 
-    /**
-     * Çalışma istatistiklerini getir
-     */
     static getStats() {
         try {
             const data = localStorage.getItem(STATS_KEY);
@@ -4665,9 +4610,6 @@ class DeckStorage {
         }
     }
 
-    /**
-     * İstatistik güncelle
-     */
     static recordStudySession(cardsStudied = 1, newlyMastered = 0) {
         const stats = this.getStats();
         stats.totalStudied += cardsStudied;
