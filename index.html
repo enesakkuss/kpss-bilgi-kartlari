@@ -5,7 +5,927 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NotebookLM Bilgi Kartları - İnteraktif Öğrenme Platformu</title>
     <meta name="description" content="NotebookLM özet ve bilgi kartlarınızı kolayca yükleyip 3D kartlar, testler ve eşleştirme oyunlarıyla çalışabileceğiniz modern web platformu.">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+/* ==========================================================================
+   NotebookLM Flashcards - Design System & CSS
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+    /* Renk Paleti */
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --bg-card-hover: rgba(51, 65, 85, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    
+    --primary-indigo: #6366f1;
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --cyan-accent: #06b6d4;
+    --emerald-accent: #10b981;
+    --rose-accent: #f43f5e;
+    --amber-accent: #f59e0b;
+
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Outfit', 'Inter', sans-serif;
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-full: 9999px;
+
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.app-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    width: 100%;
+    flex: 1;
+}
+
+/* Header & Nav */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    font-size: 2rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.5));
+}
+
+.logo-area h1 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge-tag {
+    font-size: 0.75rem;
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.global-stats {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    background: rgba(15, 23, 42, 0.6);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+}
+
+/* Controls Bar (Deste Seçimi & Yeni Kart Yükle) */
+.deck-selector-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--glass-shadow);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.deck-select-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 280px;
+}
+
+.deck-select-group label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.custom-select {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-main);
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--glass-border);
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.custom-select:focus {
+    border-color: var(--primary-indigo);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.deck-desc-text {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Modlar (Tabs) */
+.mode-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.5rem;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: #ffffff;
+    background: var(--primary-gradient);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+}
+
+/* Mode Container & Empty State */
+.mode-stage {
+    min-height: 480px;
+}
+
+.empty-mode-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px dashed var(--glass-border);
+    padding: 4rem 2rem;
+    border-radius: var(--radius-lg);
+    gap: 1rem;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    opacity: 0.8;
+}
+
+.empty-mode-state h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+}
+
+.empty-mode-state p {
+    color: var(--text-muted);
+    max-width: 450px;
+}
+
+/* Buttons */
+.ctrl-btn {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.primary-btn {
+    background: var(--primary-gradient);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+.secondary-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: var(--glass-border);
+    color: var(--text-main);
+}
+
+.secondary-btn:hover {
+    background: rgba(51, 65, 85, 0.9);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.danger-btn {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+    color: #fecdd3;
+}
+
+.danger-btn:hover {
+    background: rgba(244, 63, 94, 0.3);
+}
+
+.ctrl-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ==========================================================================
+   FLASHCARD MODE (3D Flip Animation)
+   ========================================================================== */
+
+.flashcard-mode-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.mode-header-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-card);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    gap: 1.5rem;
+}
+
+.card-counter {
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.progress-container {
+    flex: 1;
+    height: 8px;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan-accent), var(--primary-indigo));
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.mastered-badge {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--glass-border);
+}
+
+.mastered-badge.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* 3D Stage */
+.card-stage {
+    width: 100%;
+    max-width: 680px;
+    height: 380px;
+    perspective: 1200px;
+}
+
+.flashcard-3d {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    cursor: pointer;
+}
+
+.flashcard-3d.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flashcard-3d:hover .card-face {
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.25);
+}
+
+.card-front {
+    border-left: 4px solid var(--primary-indigo);
+}
+
+.card-back {
+    transform: rotateY(180deg);
+    border-left: 4px solid var(--cyan-accent);
+    background: rgba(15, 23, 42, 0.95);
+}
+
+.card-header-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tag-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.tts-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.tts-btn:hover {
+    background: rgba(99, 102, 241, 0.3);
+    transform: scale(1.1);
+}
+
+.card-body-content {
+    font-size: 1.35rem;
+    line-height: 1.6;
+    font-weight: 500;
+    color: #f1f5f9;
+    text-align: center;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+.card-footer-hint {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+/* Controls */
+.flashcard-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.flip-action-btn {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+}
+
+.toggle-master-btn.is-mastered {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #6ee7b7;
+}
+
+/* ==========================================================================
+   QUIZ MODE
+   ========================================================================== */
+
+.quiz-mode-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.score-live-badge {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--amber-accent);
+}
+
+.quiz-card-box {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.quiz-question-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #ffffff;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+}
+
+.quiz-options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+}
+
+.quiz-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--glass-border);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.quiz-option-btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--primary-indigo);
+    transform: translateX(4px);
+}
+
+.opt-letter {
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+.quiz-option-btn.correct-opt {
+    background: rgba(16, 185, 129, 0.25) !important;
+    border-color: #10b981 !important;
+    color: #a7f3d0;
+}
+
+.quiz-option-btn.wrong-opt {
+    background: rgba(244, 63, 94, 0.25) !important;
+    border-color: #f43f5e !important;
+    color: #fecdd3;
+}
+
+.quiz-footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.feedback-msg {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.feedback-msg.positive { color: #34d399; }
+.feedback-msg.negative { color: #fb7185; }
+
+/* Result Box */
+.quiz-result-wrapper, .match-victory-box {
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    padding: 3rem 2rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.result-icon {
+    font-size: 4rem;
+}
+
+.result-stats-grid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.stat-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--glass-border);
+    padding: 1.25rem 2rem;
+    border-radius: var(--radius-md);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    color: var(--cyan-accent);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   MATCHING GAME MODE
+   ========================================================================== */
+
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.match-tile {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    user-select: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.match-tile.front {
+    border-top: 3px solid var(--primary-indigo);
+}
+
+.match-tile.back {
+    border-top: 3px solid var(--cyan-accent);
+    background: rgba(15, 23, 42, 0.8);
+}
+
+.match-tile:hover:not(.matched) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(99, 102, 241, 0.6);
+}
+
+.match-tile.selected {
+    background: rgba(99, 102, 241, 0.3);
+    border-color: var(--primary-indigo);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+.match-tile.matched {
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+    transform: scale(0.95);
+}
+
+/* ==========================================================================
+   DECK MANAGER
+   ========================================================================== */
+
+.deck-manager-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+}
+
+.manager-actions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-btn-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.card-item-row {
+    display: flex;
+    gap: 1rem;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--glass-border);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    align-items: center;
+}
+
+.card-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+}
+
+.card-col label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.card-col textarea {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    resize: vertical;
+    min-height: 60px;
+    outline: none;
+}
+
+.card-col textarea:focus {
+    border-color: var(--primary-indigo);
+}
+
+.delete-card-btn {
+    background: transparent;
+    border: none;
+    color: var(--rose-accent);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+}
+
+.delete-card-btn:hover {
+    background: rgba(244, 63, 94, 0.2);
+}
+
+/* ==========================================================================
+   MODAL DIALOG
+   ========================================================================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-container {
+    background: #0f172a;
+    border: 1px solid var(--glass-border);
+    width: 90%;
+    max-width: 650px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+}
+
+.close-modal-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.text-input, .textarea-input {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    outline: none;
+}
+
+.textarea-input {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.file-drop-zone {
+    border: 2px dashed var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    background: rgba(30, 41, 59, 0.4);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.file-drop-zone:hover {
+    border-color: var(--primary-indigo);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--glass-border);
+    margin-top: 3rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+    .app-header { flex-direction: column; align-items: flex-start; }
+    .deck-selector-bar { flex-direction: column; align-items: stretch; }
+    .card-stage { height: 320px; }
+    .result-stats-grid { flex-direction: column; gap: 0.75rem; }
+    .card-item-row { flex-direction: column; }
+}
+
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -103,8 +1023,8 @@
         </div>
     </div>
 
-    <!-- Örnek Kartlar Dahili Olarak Tanımlanır (GitHub 404 Önleyici) -->
-    <script charset="utf-8">
+    <!-- Tüm Modüller ve 537 Kart Tek Bir Bağımsız HTML İçinde Gömülür -->
+    <script>
         const SAMPLE_DECKS = [
     {
         "id": "deck-karma",
@@ -3375,11 +4295,1321 @@
     }
 ];
     </script>
-    <script src="js/parser.js" charset="utf-8"></script>
-    <script src="js/storage.js" charset="utf-8"></script>
-    <script src="js/modes/flashcard.js" charset="utf-8"></script>
-    <script src="js/modes/quiz.js" charset="utf-8"></script>
-    <script src="js/modes/match.js" charset="utf-8"></script>
-    <script src="js/app.js" charset="utf-8"></script>
+    <script>
+/**
+ * NotebookLM Flashcard Smart Parser
+ * NotebookLM metinlerini, Markdown tablolarını, JSON, CSV ve serbest metinleri otomatik algılayıp kart dizisine çevirir.
+ */
+class NotebookLMParser {
+    /**
+     * Ham metin veya dosya içeriğini ayrıştırıp [{front, back}] dizisi döndürür.
+     * @param {string} rawText 
+     * @returns {Array<{front: string, back: string}>}
+     */
+    static parse(rawText) {
+        if (!rawText || typeof rawText !== 'string') return [];
+
+        const text = rawText.trim();
+        if (!text) return [];
+
+        // 1. JSON Kontrolü
+        if ((text.startsWith('[') && text.endsWith(']')) || (text.startsWith('{') && text.endsWith('}'))) {
+            try {
+                const parsed = JSON.parse(text);
+                const cards = this._parseJSON(parsed);
+                if (cards.length > 0) return cards;
+            } catch (e) {
+                console.log('JSON parse başarısız, metin olarak deneniyor...');
+            }
+        }
+
+        // 2. Markdown Tablo Kontrolü (| Soru | Cevap |)
+        if (text.includes('|') && text.includes('\n')) {
+            const tableCards = this._parseMarkdownTable(text);
+            if (tableCards.length > 0) return tableCards;
+        }
+
+        // 3. Soru/Cevap veya Q/A veya Soru-Cevap Biçimi
+        const qaCards = this._parseQAPattern(text);
+        if (qaCards.length > 0) return qaCards;
+
+        // 4. Markdown Başlık & Metin Biçimi (### Başlık \n Açıklama)
+        const headerCards = this._parseMarkdownHeaders(text);
+        if (headerCards.length > 0) return headerCards;
+
+        // 5. Ayırıcı tabanlı satır satır ayrıştırma ( - , : , :: , \t , CSV)
+        const delimitedCards = this._parseDelimited(text);
+        if (delimitedCards.length > 0) return delimitedCards;
+
+        // 6. Son Çare: Çift Yeni Satır Ayrıştırma (Örn: Paragraf Paragraf)
+        return this._parseParagraphs(text);
+    }
+
+    static _parseJSON(obj) {
+        const result = [];
+        const items = Array.isArray(obj) ? obj : (obj.cards || obj.flashcards || obj.items || [obj]);
+
+        items.forEach(item => {
+            let front = item.front || item.question || item.soru || item.term || item.kavram || item.title || item.q;
+            let back = item.back || item.answer || item.cevap || item.definition || item.aciklama || item.content || item.a;
+
+            if (!front && !back && typeof item === 'object') {
+                const keys = Object.keys(item);
+                if (keys.length >= 2) {
+                    front = item[keys[0]];
+                    back = item[keys[1]];
+                }
+            }
+
+            if (front && back) {
+                result.push({
+                    front: String(front).trim(),
+                    back: String(back).trim()
+                });
+            }
+        });
+
+        return result;
+    }
+
+    static _parseMarkdownTable(text) {
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('|') && l.endsWith('|'));
+        if (lines.length < 2) return [];
+
+        const cards = [];
+        // Tablo başlık ve ayırıcı çizgisini (---) atla
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.includes('---')) continue; // Header separator
+
+            const cols = line.split('|').map(c => c.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+            if (cols.length >= 2) {
+                const front = cols[0].replace(/\*\*/g, '');
+                const back = cols.slice(1).join(' - ');
+                // Eğer başlık satırıysa (Soru/Cevap vb.) atla
+                if (i === 0 && (front.toLowerCase().includes('soru') || front.toLowerCase().includes('front') || front.toLowerCase().includes('kavram'))) {
+                    continue;
+                }
+                if (front && back) {
+                    cards.push({ front, back });
+                }
+            }
+        }
+        return cards;
+    }
+
+    static _parseQAPattern(text) {
+        const cards = [];
+        // Pattern 1: Soru: ... \n Cevap: ... Veya Q: ... \n A: ...
+        const qaBlocks = text.split(/(?=(?:Soru|Q|Kavram|Kart)\s*\d*\s*[:\.\-])/i);
+
+        qaBlocks.forEach(block => {
+            const trimmed = block.trim();
+            if (!trimmed) return;
+
+            // Match Question and Answer
+            const qMatch = trimmed.match(/(?:Soru|Q|Kavram|Kart)\s*\d*\s*[:\.\-]\s*([\s\S]+?)(?=(?:Cevap|A|Açıklama)\s*[:\.\-]|$)/i);
+            const aMatch = trimmed.match(/(?:Cevap|A|Açıklama)\s*[:\.\-]\s*([\s\S]+)/i);
+
+            if (qMatch && aMatch) {
+                cards.push({
+                    front: qMatch[1].trim(),
+                    back: aMatch[1].trim()
+                });
+            }
+        });
+
+        return cards;
+    }
+
+    static _parseMarkdownHeaders(text) {
+        const cards = [];
+        const sections = text.split(/(?=^#{1,4}\s+)/m);
+
+        sections.forEach(sec => {
+            const lines = sec.trim().split('\n');
+            if (lines.length >= 2 && lines[0].startsWith('#')) {
+                const front = lines[0].replace(/^#{1,4}\s+/, '').trim();
+                const back = lines.slice(1).join('\n').trim();
+                if (front && back) {
+                    cards.push({ front, back });
+                }
+            }
+        });
+
+        return cards;
+    }
+
+    static _parseDelimited(text) {
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        const cards = [];
+
+        // Olası ayırıcılar: tab (\t), " :: ", " - ", " : ", çift tire "--"
+        const separators = ['\t', ' :: ', ' - ', ' : ', ' -- ', ';', ','];
+
+        for (const line of lines) {
+            // Başındaki madde işaretlerini temizle (- *, 1. vb.)
+            const cleanLine = line.replace(/^(?:[\-\*\•]|\d+[\.\)])\s*/, '');
+
+            let found = false;
+            for (const sep of separators) {
+                if (cleanLine.includes(sep)) {
+                    const parts = cleanLine.split(sep);
+                    if (parts.length >= 2) {
+                        const front = parts[0].replace(/\*\*/g, '').trim();
+                        const back = parts.slice(1).join(sep).trim();
+                        if (front.length > 0 && back.length > 0) {
+                            cards.push({ front, back });
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return cards;
+    }
+
+    static _parseParagraphs(text) {
+        const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+        const cards = [];
+
+        for (let i = 0; i < blocks.length - 1; i += 2) {
+            cards.push({
+                front: blocks[i],
+                back: blocks[i + 1]
+            });
+        }
+
+        return cards;
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { NotebookLMParser };
+}
+
+    </script>
+    <script>
+/**
+ * LocalStorage & Data Manager for NotebookLM Flashcards
+ */
+const STORAGE_KEY = 'notebooklm_flashcards_decks';
+const ACTIVE_DECK_KEY = 'notebooklm_active_deck_id';
+const STATS_KEY = 'notebooklm_study_stats';
+
+class DeckStorage {
+    /**
+     * Tüm desteleri getirir ve Türkçe karakter bozulmalarını otomatik onarır.
+     * @returns {Array}
+     */
+    static getDecks() {
+        try {
+            const data = localStorage.getItem(STORAGE_KEY);
+            let savedDecks = [];
+            if (data) {
+                savedDecks = JSON.parse(data);
+            }
+
+            const isCorrupted = (str) => str && (str.includes('Ã') || str.includes('Å') || str.includes('Â') || str.includes('½'));
+
+            let needsReset = !data;
+            if (savedDecks.length > 0) {
+                savedDecks.forEach(d => {
+                    if (isCorrupted(d.title) || isCorrupted(d.category) || isCorrupted(d.description)) {
+                        needsReset = true;
+                    }
+                });
+            }
+
+            if (needsReset && typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {
+                savedDecks = SAMPLE_DECKS;
+                this.saveDecks(savedDecks);
+                return savedDecks;
+            }
+
+            // Koddaki güncel desteleri eşitle
+            if (typeof SAMPLE_DECKS !== 'undefined' && Array.isArray(SAMPLE_DECKS)) {
+                let hasUpdates = false;
+                SAMPLE_DECKS.forEach(sample => {
+                    const existingIndex = savedDecks.findIndex(d => d.id === sample.id);
+                    if (existingIndex === -1) {
+                        savedDecks.push(sample);
+                        hasUpdates = true;
+                    } else {
+                        // Başlık ve kartları her zaman temiz UTF-8 versiyonla güncelle
+                        savedDecks[existingIndex] = sample;
+                        hasUpdates = true;
+                    }
+                });
+                if (hasUpdates) {
+                    this.saveDecks(savedDecks);
+                }
+            }
+
+            return savedDecks;
+        } catch (e) {
+            console.error('LocalStorage okuma hatası:', e);
+            return (typeof SAMPLE_DECKS !== 'undefined') ? SAMPLE_DECKS : [];
+        }
+    }
+
+    /**
+     * Tüm desteleri kaydeder.
+     * @param {Array} decks 
+     */
+    static saveDecks(decks) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
+        } catch (e) {
+            console.error('LocalStorage kaydetme hatası:', e);
+        }
+    }
+
+    /**
+     * ID'ye göre tek deste getirir.
+     * @param {string} deckId 
+     * @returns {Object|null}
+     */
+    static getDeckById(deckId) {
+        const decks = this.getDecks();
+        return decks.find(d => d.id === deckId) || null;
+    }
+
+    /**
+     * Yeni bir deste ekler veya var olanı günceller.
+     * @param {Object} deck 
+     */
+    static saveDeck(deck) {
+        const decks = this.getDecks();
+        const index = decks.findIndex(d => d.id === deck.id);
+        if (index >= 0) {
+            decks[index] = deck;
+        } else {
+            decks.unshift(deck);
+        }
+        this.saveDecks(decks);
+    }
+
+    /**
+     * Deste siler.
+     * @param {string} deckId 
+     */
+    static deleteDeck(deckId) {
+        let decks = this.getDecks();
+        decks = decks.filter(d => d.id !== deckId);
+        this.saveDecks(decks);
+    }
+
+    /**
+     * Aktif deste ID'sini al/ayarla.
+     */
+    static getActiveDeckId() {
+        const decks = this.getDecks();
+        const savedId = localStorage.getItem(ACTIVE_DECK_KEY);
+        if (savedId && decks.some(d => d.id === savedId)) {
+            return savedId;
+        }
+        return decks[0] ? decks[0].id : null;
+    }
+
+    static setActiveDeckId(deckId) {
+        localStorage.setItem(ACTIVE_DECK_KEY, deckId);
+    }
+
+    /**
+     * Deste dışa aktarma (JSON indir)
+     * @param {Object} deck 
+     */
+    static exportDeckJSON(deck) {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(deck, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `${deck.title.replace(/\s+/g, '_')}_destesi.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    /**
+     * Deste dışa aktarma (CSV indir)
+     * @param {Object} deck 
+     */
+    static exportDeckCSV(deck) {
+        let csvContent = "data:text/csv;charset=utf-8,Soru/Kavram,Cevap/Açıklama\n";
+        deck.cards.forEach(card => {
+            const front = `"${card.front.replace(/"/g, '""')}"`;
+            const back = `"${card.back.replace(/"/g, '""')}"`;
+            csvContent += `${front},${back}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${deck.title.replace(/\s+/g, '_')}_destesi.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }
+
+    /**
+     * Çalışma istatistiklerini getir
+     */
+    static getStats() {
+        try {
+            const data = localStorage.getItem(STATS_KEY);
+            return data ? JSON.parse(data) : { totalStudied: 0, masteredCount: 0, streakDays: 1, lastStudied: null };
+        } catch (e) {
+            return { totalStudied: 0, masteredCount: 0, streakDays: 1, lastStudied: null };
+        }
+    }
+
+    /**
+     * İstatistik güncelle
+     */
+    static recordStudySession(cardsStudied = 1, newlyMastered = 0) {
+        const stats = this.getStats();
+        stats.totalStudied += cardsStudied;
+        stats.masteredCount += newlyMastered;
+        stats.lastStudied = new Date().toISOString();
+        localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    }
+}
+
+    </script>
+    <script>
+/**
+ * 3D Flashcard Mode Controller
+ */
+class FlashcardMode {
+    constructor(containerEl) {
+        this.container = containerEl;
+        this.deck = null;
+        this.cards = [];
+        this.currentIndex = 0;
+        this.isFlipped = false;
+        this.speechSynth = window.speechSynthesis;
+    }
+
+    init(deck) {
+        this.deck = deck;
+        this.cards = deck ? [...deck.cards] : [];
+        this.currentIndex = 0;
+        this.isFlipped = false;
+        this.render();
+    }
+
+    render() {
+        if (!this.cards || this.cards.length === 0) {
+            this.container.innerHTML = `
+                <div class="empty-mode-state">
+                    <div class="empty-icon">🎴</div>
+                    <h3>Bu destede henüz kart bulunmuyor</h3>
+                    <p>NotebookLM'den kartlarınızı kopyalayıp "Kart Yükle" butonundan ekleyebilirsiniz.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const card = this.cards[this.currentIndex];
+        const masteredCount = this.cards.filter(c => c.mastered).length;
+        const progressPercent = Math.round(((this.currentIndex + 1) / this.cards.length) * 100);
+
+        this.container.innerHTML = `
+            <div class="flashcard-mode-wrapper">
+                <!-- Üst İlerleme & Kontrol Barı -->
+                <div class="mode-header-bar">
+                    <div class="card-counter">
+                        <span class="current-num">${this.currentIndex + 1}</span> / <span class="total-num">${this.cards.length}</span> Kart
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
+                    </div>
+                    <div class="mastered-badge ${card.mastered ? 'active' : ''}">
+                        ${card.mastered ? '⭐ Öğrenildi' : '🎯 Öğreniliyor'}
+                    </div>
+                </div>
+
+                <!-- 3D Kart Alanı -->
+                <div class="card-stage">
+                    <div class="flashcard-3d ${this.isFlipped ? 'flipped' : ''}" id="mainFlashcard">
+                        <!-- Kart Ön Yüzü -->
+                        <div class="card-face card-front">
+                            <div class="card-header-tag">
+                                <span class="tag-label">Soru / Kavram</span>
+                                <button class="tts-btn" title="Sesli Oku" onclick="event.stopPropagation(); window.flashcardMode.speakCurrent('front');">
+                                    🔊
+                                </button>
+                            </div>
+                            <div class="card-body-content">
+                                ${this.escapeHtml(card.front)}
+                            </div>
+                            <div class="card-footer-hint">
+                                <span>💡 Çevirmek için tıklayın veya SPACE'e basın</span>
+                            </div>
+                        </div>
+
+                        <!-- Kart Arka Yüzü -->
+                        <div class="card-face card-back">
+                            <div class="card-header-tag">
+                                <span class="tag-label">Cevap / Açıklama</span>
+                                <button class="tts-btn" title="Sesli Oku" onclick="event.stopPropagation(); window.flashcardMode.speakCurrent('back');">
+                                    🔊
+                                </button>
+                            </div>
+                            <div class="card-body-content">
+                                ${this.escapeHtml(card.back)}
+                            </div>
+                            <div class="card-footer-hint">
+                                <span>💡 Çevirmek için tekrar tıklayın</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alt Navigasyon Kontrolleri -->
+                <div class="flashcard-controls">
+                    <button class="ctrl-btn secondary-btn" onclick="window.flashcardMode.prevCard()" ${this.currentIndex === 0 ? 'disabled' : ''}>
+                        ← Önceki
+                    </button>
+                    
+                    <button class="ctrl-btn flip-action-btn" onclick="window.flashcardMode.toggleFlip()">
+                        🔄 Çevir (Space)
+                    </button>
+
+                    <button class="ctrl-btn toggle-master-btn ${card.mastered ? 'is-mastered' : ''}" onclick="window.flashcardMode.toggleMastered()">
+                        ${card.mastered ? '✅ Öğrenildi Olarak İşaretli' : '⭐ Öğrenildi İşaretle'}
+                    </button>
+
+                    <button class="ctrl-btn secondary-btn" onclick="window.flashcardMode.nextCard()" ${this.currentIndex === this.cards.length - 1 ? 'disabled' : ''}>
+                        Sonraki →
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Kart tıklama olayı
+        const cardEl = document.getElementById('mainFlashcard');
+        if (cardEl) {
+            cardEl.addEventListener('click', () => this.toggleFlip());
+        }
+    }
+
+    toggleFlip() {
+        this.isFlipped = !this.isFlipped;
+        const cardEl = document.getElementById('mainFlashcard');
+        if (cardEl) {
+            if (this.isFlipped) {
+                cardEl.classList.add('flipped');
+            } else {
+                cardEl.classList.remove('flipped');
+            }
+        }
+    }
+
+    nextCard() {
+        if (this.currentIndex < this.cards.length - 1) {
+            this.currentIndex++;
+            this.isFlipped = false;
+            this.render();
+            DeckStorage.recordStudySession(1, 0);
+        }
+    }
+
+    prevCard() {
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+            this.isFlipped = false;
+            this.render();
+        }
+    }
+
+    toggleMastered() {
+        const card = this.cards[this.currentIndex];
+        card.mastered = !card.mastered;
+        
+        // DeckStorage'a kaydet
+        if (this.deck) {
+            const cardInDeck = this.deck.cards.find(c => c.id === card.id);
+            if (cardInDeck) cardInDeck.mastered = card.mastered;
+            DeckStorage.saveDeck(this.deck);
+        }
+
+        if (card.mastered) {
+            DeckStorage.recordStudySession(0, 1);
+        }
+
+        this.render();
+    }
+
+    speakCurrent(side) {
+        if (!this.speechSynth) return;
+        this.speechSynth.cancel(); // Önceki seslendirmeyi durdur
+
+        const card = this.cards[this.currentIndex];
+        const text = side === 'front' ? card.front : card.back;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        // Türkçe metin varsayımı
+        utterance.lang = 'tr-TR';
+        utterance.rate = 0.95;
+
+        this.speechSynth.speak(utterance);
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML.replace(/\n/g, '<br>');
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { FlashcardMode };
+}
+
+    </script>
+    <script>
+/**
+ * Multiple Choice Quiz Mode Controller
+ */
+class QuizMode {
+    constructor(containerEl) {
+        this.container = containerEl;
+        this.deck = null;
+        this.questions = [];
+        this.currentIndex = 0;
+        this.score = 0;
+        this.userAnswers = [];
+        this.isFinished = false;
+    }
+
+    init(deck) {
+        this.deck = deck;
+        this.score = 0;
+        this.currentIndex = 0;
+        this.userAnswers = [];
+        this.isFinished = false;
+
+        if (!deck || !deck.cards || deck.cards.length < 2) {
+            this.container.innerHTML = `
+                <div class="empty-mode-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>Test Modu için En Az 2 Kart Gereklidir</h3>
+                    <p>Çoktan seçmeli test seçeneğinin hazırlanabilmesi için destede birden fazla kart olmalıdır.</p>
+                </div>
+            `;
+            return;
+        }
+
+        this.generateQuestions();
+        this.render();
+    }
+
+    generateQuestions() {
+        const allCards = [...this.deck.cards];
+        // Kartları karıştır
+        const shuffledCards = [...allCards].sort(() => 0.5 - Math.random());
+
+        this.questions = shuffledCards.map(card => {
+            // Çeldiricileri seç (diğer kartların cevapları)
+            const wrongAnswers = allCards
+                .filter(c => c.id !== card.id)
+                .map(c => c.back)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+
+            // Eğer yeterli çeldirici yoksa varsayılanlar ekle
+            while (wrongAnswers.length < 3) {
+                wrongAnswers.push("Diğer bir kavram / Tanımsız");
+            }
+
+            const options = [card.back, ...wrongAnswers].sort(() => 0.5 - Math.random());
+
+            return {
+                cardId: card.id,
+                question: card.front,
+                correctAnswer: card.back,
+                options: options
+            };
+        });
+    }
+
+    render() {
+        if (this.isFinished) {
+            this.renderResult();
+            return;
+        }
+
+        const q = this.questions[this.currentIndex];
+        const progressPercent = Math.round(((this.currentIndex + 1) / this.questions.length) * 100);
+        const answered = this.userAnswers[this.currentIndex];
+
+        this.container.innerHTML = `
+            <div class="quiz-mode-wrapper">
+                <div class="mode-header-bar">
+                    <div class="card-counter">
+                        Soru <span class="current-num">${this.currentIndex + 1}</span> / <span class="total-num">${this.questions.length}</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
+                    </div>
+                    <div class="score-live-badge">
+                        Puan: ${this.score}
+                    </div>
+                </div>
+
+                <div class="quiz-card-box">
+                    <div class="quiz-question-title">
+                        ${this.escapeHtml(q.question)}
+                    </div>
+
+                    <div class="quiz-options-grid">
+                        ${q.options.map((opt, idx) => {
+                            const optionLetter = String.fromCharCode(65 + idx); // A, B, C, D
+                            let statusClass = '';
+                            
+                            if (answered !== undefined) {
+                                if (opt === q.correctAnswer) {
+                                    statusClass = 'correct-opt';
+                                } else if (opt === answered.selectedOption) {
+                                    statusClass = 'wrong-opt';
+                                } else {
+                                    statusClass = 'disabled-opt';
+                                }
+                            }
+
+                            return `
+                                <button class="quiz-option-btn ${statusClass}" 
+                                        onclick="window.quizMode.selectOption(${idx})"
+                                        ${answered !== undefined ? 'disabled' : ''}>
+                                    <span class="opt-letter">${optionLetter}</span>
+                                    <span class="opt-text">${this.escapeHtml(opt)}</span>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <div class="quiz-footer-actions">
+                    ${answered !== undefined ? `
+                        <div class="feedback-msg ${answered.isCorrect ? 'positive' : 'negative'}">
+                            ${answered.isCorrect ? '🎉 Doğru Yanıt!' : '❌ Yanlış Yanıt. Doğru cevap yeşil renkle vurgulandı.'}
+                        </div>
+                        <button class="ctrl-btn primary-btn" onclick="window.quizMode.nextQuestion()">
+                            ${this.currentIndex < this.questions.length - 1 ? 'Sonraki Soru →' : 'Sonuçları Gör 🏆'}
+                        </button>
+                    ` : `
+                        <div class="quiz-hint">Devam etmek için bir seçeneği işaretleyin.</div>
+                    `}
+                </div>
+            </div>
+        `;
+    }
+
+    selectOption(index) {
+        if (this.userAnswers[this.currentIndex] !== undefined) return;
+
+        const q = this.questions[this.currentIndex];
+        const selectedOption = q.options[index];
+        const isCorrect = selectedOption === q.correctAnswer;
+
+        if (isCorrect) this.score += 10;
+
+        this.userAnswers[this.currentIndex] = {
+            selectedOption,
+            isCorrect
+        };
+
+        this.render();
+    }
+
+    nextQuestion() {
+        if (this.currentIndex < this.questions.length - 1) {
+            this.currentIndex++;
+            this.render();
+        } else {
+            this.isFinished = true;
+            this.renderResult();
+        }
+    }
+
+    renderResult() {
+        const correctCount = this.userAnswers.filter(a => a && a.isCorrect).length;
+        const total = this.questions.length;
+        const accuracy = Math.round((correctCount / total) * 100);
+
+        this.container.innerHTML = `
+            <div class="quiz-result-wrapper">
+                <div class="result-icon">${accuracy >= 70 ? '🎉' : '📚'}</div>
+                <h2>Test Tamamlandı!</h2>
+                
+                <div class="result-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${this.score}</div>
+                        <div class="stat-label">Toplam Puan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">%${accuracy}</div>
+                        <div class="stat-label">Başarı Oranı</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${correctCount} / ${total}</div>
+                        <div class="stat-label">Doğru Sayısı</div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="ctrl-btn primary-btn" onclick="window.quizMode.init(window.quizMode.deck)">
+                        🔄 Testi Tekrar Başlat
+                    </button>
+                </div>
+            </div>
+        `;
+
+        DeckStorage.recordStudySession(total, correctCount);
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML;
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { QuizMode };
+}
+
+    </script>
+    <script>
+/**
+ * Card Matching Game Mode Controller
+ */
+class MatchMode {
+    constructor(containerEl) {
+        this.container = containerEl;
+        this.deck = null;
+        this.tiles = [];
+        this.selectedTile = null;
+        this.matchesCount = 0;
+        this.totalPairs = 0;
+        this.timer = 0;
+        this.timerInterval = null;
+        this.isCompleted = false;
+    }
+
+    init(deck) {
+        this.deck = deck;
+        this.selectedTile = null;
+        this.matchesCount = 0;
+        this.timer = 0;
+        this.isCompleted = false;
+        clearInterval(this.timerInterval);
+
+        if (!deck || !deck.cards || deck.cards.length < 2) {
+            this.container.innerHTML = `
+                <div class="empty-mode-state">
+                    <div class="empty-icon">🧩</div>
+                    <h3>Eşleştirme Oyunu İçin En Az 2 Kart Gereklidir</h3>
+                    <p>Eşleştirme oyunu oynamak için destenizde daha fazla bilgi kartı olduğundan emin olun.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Oyunda en fazla 8 çift (16 kart karoları) göster
+        const selectedCards = [...deck.cards].sort(() => 0.5 - Math.random()).slice(0, 8);
+        this.totalPairs = selectedCards.length;
+
+        // Front ve Back karoları oluştur
+        const tileList = [];
+        selectedCards.forEach(card => {
+            tileList.push({
+                id: `front-${card.id}`,
+                cardId: card.id,
+                type: 'front',
+                text: card.front,
+                matched: false
+            });
+            tileList.push({
+                id: `back-${card.id}`,
+                cardId: card.id,
+                type: 'back',
+                text: card.back,
+                matched: false
+            });
+        });
+
+        // Karoları karıştır
+        this.tiles = tileList.sort(() => 0.5 - Math.random());
+
+        this.startTimer();
+        this.render();
+    }
+
+    startTimer() {
+        this.timerInterval = setInterval(() => {
+            if (!this.isCompleted) {
+                this.timer++;
+                const timerEl = document.getElementById('matchTimerVal');
+                if (timerEl) {
+                    timerEl.innerText = `${this.timer} sn`;
+                }
+            }
+        }, 1000);
+    }
+
+    render() {
+        if (this.isCompleted) {
+            this.renderVictory();
+            return;
+        }
+
+        this.container.innerHTML = `
+            <div class="match-mode-wrapper">
+                <div class="mode-header-bar">
+                    <div class="card-counter">
+                        Eşleşen: <span class="current-num" id="matchPairsVal">${this.matchesCount}</span> / <span class="total-num">${this.totalPairs}</span>
+                    </div>
+                    <div class="score-live-badge">
+                        ⏱️ Süre: <span id="matchTimerVal">${this.timer} sn</span>
+                    </div>
+                </div>
+
+                <div class="match-grid">
+                    ${this.tiles.map((tile, idx) => `
+                        <div class="match-tile ${tile.type} ${tile.matched ? 'matched' : ''} ${this.selectedTile && this.selectedTile.id === tile.id ? 'selected' : ''}"
+                             onclick="window.matchMode.handleTileClick(${idx})">
+                            <div class="tile-content">${this.escapeHtml(tile.text)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    handleTileClick(index) {
+        const tile = this.tiles[index];
+        if (tile.matched || (this.selectedTile && this.selectedTile.id === tile.id)) return;
+
+        if (!this.selectedTile) {
+            // İlk karoyu seç
+            this.selectedTile = tile;
+            this.render();
+        } else {
+            // İkinci karoyu seç ve kontrol et
+            const first = this.selectedTile;
+            const second = tile;
+
+            if (first.cardId === second.cardId && first.type !== second.type) {
+                // DOĞRU EŞLEŞME
+                first.matched = true;
+                second.matched = true;
+                this.matchesCount++;
+                this.selectedTile = null;
+
+                if (this.matchesCount === this.totalPairs) {
+                    this.isCompleted = true;
+                    clearInterval(this.timerInterval);
+                }
+                this.render();
+            } else {
+                // YANLIŞ EŞLEŞME - Geçici vurgu göster
+                this.selectedTile = null;
+                const tileEls = document.querySelectorAll('.match-tile');
+                // Hatalı tile görseli
+                this.render();
+            }
+        }
+    }
+
+    renderVictory() {
+        this.container.innerHTML = `
+            <div class="match-victory-box">
+                <div class="result-icon">⚡</div>
+                <h2>Harika! Tüm Kartları Eşleştirdiniz!</h2>
+                <p>Tüm kavram ve tanımları <strong>${this.timer} saniyede</strong> başarıyla tamamladınız.</p>
+                <div class="result-actions">
+                    <button class="ctrl-btn primary-btn" onclick="window.matchMode.init(window.matchMode.deck)">
+                        🎮 Yeniden Oyna
+                    </button>
+                </div>
+            </div>
+        `;
+        DeckStorage.recordStudySession(this.totalPairs * 2, this.totalPairs);
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML;
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { MatchMode };
+}
+
+    </script>
+    <script>
+/**
+ * NotebookLM Flashcards Main Application Controller
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new NotebookLMApp();
+});
+
+class NotebookLMApp {
+    constructor() {
+        this.decks = [];
+        this.activeDeck = null;
+        this.activeMode = 'flashcard'; // 'flashcard', 'quiz', 'match', 'manage'
+        
+        // Mode controllers
+        this.flashcardMode = new FlashcardMode(document.getElementById('modeContainer'));
+        this.quizMode = new QuizMode(document.getElementById('modeContainer'));
+        this.matchMode = new MatchMode(document.getElementById('modeContainer'));
+
+        // Global access
+        window.flashcardMode = this.flashcardMode;
+        window.quizMode = this.quizMode;
+        window.matchMode = this.matchMode;
+
+        this.init();
+    }
+
+    init() {
+        this.loadDecks();
+        this.setupEventListeners();
+        this.setupKeyboardShortcuts();
+        this.renderDeckSelector();
+        this.switchMode(this.activeMode);
+        this.updateStatsDisplay();
+    }
+
+    loadDecks() {
+        this.decks = DeckStorage.getDecks();
+        const activeId = DeckStorage.getActiveDeckId();
+        this.activeDeck = (activeId ? this.decks.find(d => d.id === activeId) : null) || this.decks[0] || null;
+        if (this.activeDeck) {
+            DeckStorage.setActiveDeckId(this.activeDeck.id);
+        }
+    }
+
+    renderDeckSelector() {
+        const selectEl = document.getElementById('deckSelect');
+        if (!selectEl) return;
+
+        selectEl.innerHTML = this.decks.map(d => `
+            <option value="${d.id}" ${this.activeDeck && d.id === this.activeDeck.id ? 'selected' : ''}>
+                ${this.escapeHtml(d.title)} (${d.cards.length} kart)
+            </option>
+        `).join('');
+
+        // Deste Açıklamasını Güncelle
+        const descEl = document.getElementById('deckDesc');
+        if (descEl && this.activeDeck) {
+            descEl.innerText = this.activeDeck.description || `${this.activeDeck.cards.length} adet bilgi kartı`;
+        }
+    }
+
+    switchDeck(deckId) {
+        const found = this.decks.find(d => d.id === deckId);
+        if (found) {
+            this.activeDeck = found;
+            DeckStorage.setActiveDeckId(deckId);
+            this.renderDeckSelector();
+            this.switchMode(this.activeMode);
+        }
+    }
+
+    switchMode(modeName) {
+        this.activeMode = modeName;
+
+        // Tab Butonlarını Güncelle
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === modeName);
+        });
+
+        const container = document.getElementById('modeContainer');
+        if (!container) return;
+
+        if (!this.activeDeck || !this.activeDeck.cards || this.activeDeck.cards.length === 0) {
+            container.innerHTML = `
+                <div class="empty-mode-state">
+                    <div class="empty-icon">📂</div>
+                    <h3>Bu Deste Boş</h3>
+                    <p>Yukarıdaki "+ NotebookLM Kart Yükle" butonuna tıklayarak metin veya dosya yükleyebilirsiniz.</p>
+                </div>
+            `;
+            return;
+        }
+
+        if (modeName === 'flashcard') {
+            this.flashcardMode.init(this.activeDeck);
+        } else if (modeName === 'quiz') {
+            this.quizMode.init(this.activeDeck);
+        } else if (modeName === 'match') {
+            this.matchMode.init(this.activeDeck);
+        } else if (modeName === 'manage') {
+            this.renderDeckManager(container);
+        }
+    }
+
+    renderDeckManager(container) {
+        if (!this.activeDeck) return;
+
+        container.innerHTML = `
+            <div class="deck-manager-wrapper">
+                <div class="manager-actions-header">
+                    <h3>Deste Kartları: ${this.escapeHtml(this.activeDeck.title)}</h3>
+                    <div class="action-btn-group">
+                        <button class="ctrl-btn secondary-btn" onclick="window.app.addSingleCard()">
+                            ➕ Yeni Kart Ekle
+                        </button>
+                        <button class="ctrl-btn secondary-btn" onclick="window.app.exportActiveJSON()">
+                            💾 JSON İndir
+                        </button>
+                        <button class="ctrl-btn secondary-btn" onclick="window.app.exportActiveCSV()">
+                            📊 CSV İndir
+                        </button>
+                        <button class="ctrl-btn danger-btn" onclick="window.app.deleteActiveDeck()">
+                            🗑️ Desteyi Sil
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cards-list">
+                    ${this.activeDeck.cards.map((card, idx) => `
+                        <div class="card-item-row" id="card-row-${card.id}">
+                            <div class="card-col front-col">
+                                <label>Soru / Kavram</label>
+                                <textarea onchange="window.app.updateCardText('${card.id}', 'front', this.value)">${this.escapeHtml(card.front)}</textarea>
+                            </div>
+                            <div class="card-col back-col">
+                                <label>Cevap / Açıklama</label>
+                                <textarea onchange="window.app.updateCardText('${card.id}', 'back', this.value)">${this.escapeHtml(card.back)}</textarea>
+                            </div>
+                            <div class="card-col action-col">
+                                <button class="delete-card-btn" title="Kartı Sil" onclick="window.app.deleteCard('${card.id}')">
+                                    ❌
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    addSingleCard() {
+        if (!this.activeDeck) return;
+        const newCard = {
+            id: 'c_' + Date.now(),
+            front: 'Yeni Soru / Kavram',
+            back: 'Açıklama veya Cevap metni',
+            mastered: false
+        };
+        this.activeDeck.cards.unshift(newCard);
+        DeckStorage.saveDeck(this.activeDeck);
+        this.switchMode('manage');
+    }
+
+    updateCardText(cardId, field, value) {
+        if (!this.activeDeck) return;
+        const card = this.activeDeck.cards.find(c => c.id === cardId);
+        if (card) {
+            card[field] = value.trim();
+            DeckStorage.saveDeck(this.activeDeck);
+        }
+    }
+
+    deleteCard(cardId) {
+        if (!this.activeDeck) return;
+        this.activeDeck.cards = this.activeDeck.cards.filter(c => c.id !== cardId);
+        DeckStorage.saveDeck(this.activeDeck);
+        this.switchMode('manage');
+    }
+
+    deleteActiveDeck() {
+        if (!this.activeDeck) return;
+        if (confirm(`"${this.activeDeck.title}" destesini silmek istediğinize emin misiniz?`)) {
+            DeckStorage.deleteDeck(this.activeDeck.id);
+            this.loadDecks();
+            this.renderDeckSelector();
+            this.switchMode('flashcard');
+        }
+    }
+
+    exportActiveJSON() {
+        if (this.activeDeck) DeckStorage.exportDeckJSON(this.activeDeck);
+    }
+
+    exportActiveCSV() {
+        if (this.activeDeck) DeckStorage.exportDeckCSV(this.activeDeck);
+    }
+
+    setupEventListeners() {
+        // Deste Seçim Eventi
+        const selectEl = document.getElementById('deckSelect');
+        if (selectEl) {
+            selectEl.addEventListener('change', (e) => this.switchDeck(e.target.value));
+        }
+
+        // Tab Butonları
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.switchMode(btn.dataset.mode));
+        });
+
+        // Modallar
+        const uploadModal = document.getElementById('uploadModal');
+        const openUploadBtn = document.getElementById('openUploadModalBtn');
+        const closeUploadBtn = document.getElementById('closeUploadModalBtn');
+
+        if (openUploadBtn && uploadModal) {
+            openUploadBtn.addEventListener('click', () => uploadModal.classList.add('active'));
+        }
+        if (closeUploadBtn && uploadModal) {
+            closeUploadBtn.addEventListener('click', () => uploadModal.classList.remove('active'));
+        }
+
+        // Metin Yapıştırarak Kart Yükle
+        const processImportBtn = document.getElementById('processImportBtn');
+        if (processImportBtn) {
+            processImportBtn.addEventListener('click', () => this.handleImport());
+        }
+
+        // Dosya Yükleme Eventi (Drag & Drop / File Input)
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => this.handleFileUpload(e.target.files[0]));
+        }
+
+        // Yeni Boş Deste Oluştur
+        const newDeckBtn = document.getElementById('newDeckBtn');
+        if (newDeckBtn) {
+            newDeckBtn.addEventListener('click', () => {
+                const title = prompt('Yeni Deste Adını Girin:');
+                if (title && title.trim()) {
+                    const newDeck = {
+                        id: 'deck_' + Date.now(),
+                        title: title.trim(),
+                        description: 'NotebookLM Bilgi Kartları',
+                        createdAt: new Date().toISOString(),
+                        cards: []
+                    };
+                    DeckStorage.saveDeck(newDeck);
+                    this.loadDecks();
+                    this.switchDeck(newDeck.id);
+                }
+            });
+        }
+    }
+
+    handleImport() {
+        const titleInput = document.getElementById('importDeckTitle');
+        const textInput = document.getElementById('importTextarea');
+
+        const title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : 'NotebookLM İçe Aktarılan Deste';
+        const text = textInput ? textInput.value : '';
+
+        if (!text || !text.trim()) {
+            alert('Lütfen NotebookLM\'den kopyaladığınız metni yapıştırın!');
+            return;
+        }
+
+        const parsedCards = NotebookLMParser.parse(text);
+
+        if (parsedCards.length === 0) {
+            alert('Metin çözümlenemedi. Lütfen metnin "Soru: Cevap", "Kavram - Açıklama" veya Tablo biçiminde olduğunu kontrol edin.');
+            return;
+        }
+
+        const newDeck = {
+            id: 'deck_' + Date.now(),
+            title: title,
+            description: `NotebookLM'den ${parsedCards.length} kart aktarıldı`,
+            createdAt: new Date().toISOString(),
+            cards: parsedCards.map((c, i) => ({ id: `c_${i}_${Date.now()}`, front: c.front, back: c.back, mastered: false }))
+        };
+
+        DeckStorage.saveDeck(newDeck);
+        this.loadDecks();
+        this.switchDeck(newDeck.id);
+
+        // Modalı kapat ve formu temizle
+        document.getElementById('uploadModal').classList.remove('active');
+        textInput.value = '';
+        if (titleInput) titleInput.value = '';
+        alert(`Başarılı! ${parsedCards.length} adet kart yeni desteye eklendi.`);
+    }
+
+    handleFileUpload(file) {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            const parsedCards = NotebookLMParser.parse(content);
+
+            if (parsedCards.length > 0) {
+                const deckTitle = file.name.replace(/\.[^/.]+$/, "") || "Yüklenen Deste";
+                const newDeck = {
+                    id: 'deck_' + Date.now(),
+                    title: deckTitle,
+                    description: `Dosyadan aktarıldı (${file.name})`,
+                    createdAt: new Date().toISOString(),
+                    cards: parsedCards.map((c, i) => ({ id: `c_${i}_${Date.now()}`, front: c.front, back: c.back, mastered: false }))
+                };
+                DeckStorage.saveDeck(newDeck);
+                this.loadDecks();
+                this.switchDeck(newDeck.id);
+                document.getElementById('uploadModal').classList.remove('active');
+                alert(`Başarılı! ${file.name} dosyasından ${parsedCards.length} kart okundu.`);
+            } else {
+                alert('Dosyadaki veriler çözümlenemedi.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+            if (this.activeMode === 'flashcard') {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    this.flashcardMode.toggleFlip();
+                } else if (e.code === 'ArrowRight') {
+                    this.flashcardMode.nextCard();
+                } else if (e.code === 'ArrowLeft') {
+                    this.flashcardMode.prevCard();
+                } else if (e.code === 'KeyM') {
+                    this.flashcardMode.toggleMastered();
+                }
+            }
+        });
+    }
+
+    updateStatsDisplay() {
+        const stats = DeckStorage.getStats();
+        const statEl = document.getElementById('globalStatsDisplay');
+        if (statEl) {
+            statEl.innerHTML = `🔥 Toplam Çalışılan: <strong>${stats.totalStudied}</strong> | Öğrenilen: <strong>${stats.masteredCount}</strong>`;
+        }
+    }
+
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.innerText = text;
+        return div.innerHTML;
+    }
+}
+
+    </script>
 </body>
 </html>
