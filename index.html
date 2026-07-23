@@ -927,7 +927,7 @@ body {
 
 
 /* ==========================================================================
-   MULTIPLE CHOICE QUIZ MODE STYLES
+   MULTIPLE CHOICE QUIZ MODE & QUICK JUMP STYLES
    ========================================================================== */
 
 .mc-mode-wrapper {
@@ -946,6 +946,32 @@ body {
     padding: 0.85rem 1.5rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.quick-jump-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.jump-input {
+    width: 80px;
+    padding: 0.45rem 0.6rem;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: center;
+    outline: none;
+}
+
+.jump-input:focus {
+    border-color: var(--cyan-accent);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
 }
 
 .mc-score-badge {
@@ -1077,7 +1103,7 @@ body {
             <div class="logo-area">
                 <span class="logo-icon">🎴</span>
                 <h1>KPSS Bilgi Kartları & Test Platformu</h1>
-                <span class="badge-tag">v10.0</span>
+                <span class="badge-tag">v13.0</span>
             </div>
             <div class="header-actions">
                 <button class="ctrl-btn secondary-btn" style="font-size: 0.85rem;" onclick="DeckStorage.forceResetDecks();">
@@ -1120,7 +1146,7 @@ body {
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>KPSS Bilgi Kartları • v10.0 Tarih (118 Soru) & Vatandaşlık (75 Soru) Dahil (1185 İçerik)</p>
+            <p>KPSS Bilgi Kartları • v13.0 Hızlı Soru & Kart Numarasına Gitme Özellikli</p>
         </footer>
     </div>
 
@@ -12749,199 +12775,6 @@ body {
 ];
     </script>
     <script>
-/**
- * NotebookLM Flashcard Smart Parser
- * NotebookLM metinlerini, Markdown tablolarını, JSON, CSV ve serbest metinleri otomatik algılayıp kart dizisine çevirir.
- */
-class NotebookLMParser {
-    /**
-     * Ham metin veya dosya içeriğini ayrıştırıp [{front, back}] dizisi döndürür.
-     * @param {string} rawText 
-     * @returns {Array<{front: string, back: string}>}
-     */
-    static parse(rawText) {
-        if (!rawText || typeof rawText !== 'string') return [];
-
-        const text = rawText.trim();
-        if (!text) return [];
-
-        // 1. JSON Kontrolü
-        if ((text.startsWith('[') && text.endsWith(']')) || (text.startsWith('{') && text.endsWith('}'))) {
-            try {
-                const parsed = JSON.parse(text);
-                const cards = this._parseJSON(parsed);
-                if (cards.length > 0) return cards;
-            } catch (e) {
-                console.log('JSON parse başarısız, metin olarak deneniyor...');
-            }
-        }
-
-        // 2. Markdown Tablo Kontrolü (| Soru | Cevap |)
-        if (text.includes('|') && text.includes('\n')) {
-            const tableCards = this._parseMarkdownTable(text);
-            if (tableCards.length > 0) return tableCards;
-        }
-
-        // 3. Soru/Cevap veya Q/A veya Soru-Cevap Biçimi
-        const qaCards = this._parseQAPattern(text);
-        if (qaCards.length > 0) return qaCards;
-
-        // 4. Markdown Başlık & Metin Biçimi (### Başlık \n Açıklama)
-        const headerCards = this._parseMarkdownHeaders(text);
-        if (headerCards.length > 0) return headerCards;
-
-        // 5. Ayırıcı tabanlı satır satır ayrıştırma ( - , : , :: , \t , CSV)
-        const delimitedCards = this._parseDelimited(text);
-        if (delimitedCards.length > 0) return delimitedCards;
-
-        // 6. Son Çare: Çift Yeni Satır Ayrıştırma (Örn: Paragraf Paragraf)
-        return this._parseParagraphs(text);
-    }
-
-    static _parseJSON(obj) {
-        const result = [];
-        const items = Array.isArray(obj) ? obj : (obj.cards || obj.flashcards || obj.items || [obj]);
-
-        items.forEach(item => {
-            let front = item.front || item.question || item.soru || item.term || item.kavram || item.title || item.q;
-            let back = item.back || item.answer || item.cevap || item.definition || item.aciklama || item.content || item.a;
-
-            if (!front && !back && typeof item === 'object') {
-                const keys = Object.keys(item);
-                if (keys.length >= 2) {
-                    front = item[keys[0]];
-                    back = item[keys[1]];
-                }
-            }
-
-            if (front && back) {
-                result.push({
-                    front: String(front).trim(),
-                    back: String(back).trim()
-                });
-            }
-        });
-
-        return result;
-    }
-
-    static _parseMarkdownTable(text) {
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('|') && l.endsWith('|'));
-        if (lines.length < 2) return [];
-
-        const cards = [];
-        // Tablo başlık ve ayırıcı çizgisini (---) atla
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            if (line.includes('---')) continue; // Header separator
-
-            const cols = line.split('|').map(c => c.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
-            if (cols.length >= 2) {
-                const front = cols[0].replace(/\*\*/g, '');
-                const back = cols.slice(1).join(' - ');
-                // Eğer başlık satırıysa (Soru/Cevap vb.) atla
-                if (i === 0 && (front.toLowerCase().includes('soru') || front.toLowerCase().includes('front') || front.toLowerCase().includes('kavram'))) {
-                    continue;
-                }
-                if (front && back) {
-                    cards.push({ front, back });
-                }
-            }
-        }
-        return cards;
-    }
-
-    static _parseQAPattern(text) {
-        const cards = [];
-        // Pattern 1: Soru: ... \n Cevap: ... Veya Q: ... \n A: ...
-        const qaBlocks = text.split(/(?=(?:Soru|Q|Kavram|Kart)\s*\d*\s*[:\.\-])/i);
-
-        qaBlocks.forEach(block => {
-            const trimmed = block.trim();
-            if (!trimmed) return;
-
-            // Match Question and Answer
-            const qMatch = trimmed.match(/(?:Soru|Q|Kavram|Kart)\s*\d*\s*[:\.\-]\s*([\s\S]+?)(?=(?:Cevap|A|Açıklama)\s*[:\.\-]|$)/i);
-            const aMatch = trimmed.match(/(?:Cevap|A|Açıklama)\s*[:\.\-]\s*([\s\S]+)/i);
-
-            if (qMatch && aMatch) {
-                cards.push({
-                    front: qMatch[1].trim(),
-                    back: aMatch[1].trim()
-                });
-            }
-        });
-
-        return cards;
-    }
-
-    static _parseMarkdownHeaders(text) {
-        const cards = [];
-        const sections = text.split(/(?=^#{1,4}\s+)/m);
-
-        sections.forEach(sec => {
-            const lines = sec.trim().split('\n');
-            if (lines.length >= 2 && lines[0].startsWith('#')) {
-                const front = lines[0].replace(/^#{1,4}\s+/, '').trim();
-                const back = lines.slice(1).join('\n').trim();
-                if (front && back) {
-                    cards.push({ front, back });
-                }
-            }
-        });
-
-        return cards;
-    }
-
-    static _parseDelimited(text) {
-        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-        const cards = [];
-
-        // Olası ayırıcılar: tab (\t), " :: ", " - ", " : ", çift tire "--"
-        const separators = ['\t', ' :: ', ' - ', ' : ', ' -- ', ';', ','];
-
-        for (const line of lines) {
-            // Başındaki madde işaretlerini temizle (- *, 1. vb.)
-            const cleanLine = line.replace(/^(?:[\-\*\•]|\d+[\.\)])\s*/, '');
-
-            let found = false;
-            for (const sep of separators) {
-                if (cleanLine.includes(sep)) {
-                    const parts = cleanLine.split(sep);
-                    if (parts.length >= 2) {
-                        const front = parts[0].replace(/\*\*/g, '').trim();
-                        const back = parts.slice(1).join(sep).trim();
-                        if (front.length > 0 && back.length > 0) {
-                            cards.push({ front, back });
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return cards;
-    }
-
-    static _parseParagraphs(text) {
-        const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
-        const cards = [];
-
-        for (let i = 0; i < blocks.length - 1; i += 2) {
-            cards.push({
-                front: blocks[i],
-                back: blocks[i + 1]
-            });
-        }
-
-        return cards;
-    }
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { NotebookLMParser };
-}
 
     </script>
     <script>
@@ -12950,7 +12783,7 @@ const STORAGE_KEY = 'notebooklm_flashcards_decks';
 const ACTIVE_DECK_KEY = 'notebooklm_active_deck_id';
 const STATS_KEY = 'notebooklm_study_stats';
 const VERSION_KEY = 'notebooklm_app_version';
-const CURRENT_VERSION = '10.0_exact_118_tarih_cikmis_sorular';
+const CURRENT_VERSION = '13.0_quick_jump_question_and_card_num';
 
 class DeckStorage {
     static checkAndMigrateVersion() {
@@ -13135,13 +12968,20 @@ class FlashcardMode {
 
         this.container.innerHTML = `
             <div class="flashcard-mode-wrapper">
-                <div class="mode-header-bar">
+                <div class="mode-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
                     <div class="card-counter">
                         <span class="current-num">${this.currentIndex + 1}</span> / <span class="total-num">${this.cards.length}</span> Kart
                     </div>
-                    <div class="progress-container">
+
+                    <div class="quick-jump-box">
+                        <input type="number" id="fcJumpInput" class="jump-input" min="1" max="${this.cards.length}" placeholder="No..." onkeypress="if(event.key==='Enter') window.flashcardMode.jumpToCard();">
+                        <button class="ctrl-btn secondary-btn" style="padding:0.45rem 0.8rem; font-size:0.85rem;" onclick="window.flashcardMode.jumpToCard()">Karta Git ➔</button>
+                    </div>
+
+                    <div class="progress-container" style="flex:1; max-width:200px;">
                         <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
                     </div>
+
                     <div class="mastered-badge ${card.mastered ? 'active' : ''}">
                         ${card.mastered ? '⭐ Öğrenildi' : '🎯 Öğreniliyor'}
                     </div>
@@ -13204,6 +13044,19 @@ class FlashcardMode {
         const cardEl = document.getElementById('mainFlashcard');
         if (cardEl) {
             cardEl.addEventListener('click', () => this.toggleFlip());
+        }
+    }
+
+    jumpToCard() {
+        const inputEl = document.getElementById('fcJumpInput');
+        if (!inputEl) return;
+        const targetNum = parseInt(inputEl.value, 10);
+        if (targetNum >= 1 && targetNum <= this.cards.length) {
+            this.currentIndex = targetNum - 1;
+            this.isFlipped = false;
+            this.render();
+        } else {
+            alert(`Lütfen 1 ile ${this.cards.length} arasında geçerli bir kart numarası girin.`);
         }
     }
 
@@ -13321,6 +13174,12 @@ class MultipleChoiceMode {
                     <div class="mc-progress-info">
                         Soru <strong id="mcCurrentNum">1</strong> / ${this.cards.length}
                     </div>
+
+                    <div class="quick-jump-box">
+                        <input type="number" id="mcJumpInput" class="jump-input" min="1" max="${this.cards.length}" placeholder="Soru No..." onkeypress="if(event.key==='Enter') window.multipleChoiceMode.jumpToQuestion();">
+                        <button class="ctrl-btn secondary-btn" style="padding:0.45rem 0.8rem; font-size:0.85rem;" onclick="window.multipleChoiceMode.jumpToQuestion()">Soruya Git ➔</button>
+                    </div>
+
                     <div class="mc-score-badge">
                         <span style="color: var(--emerald-accent);">✅ Doğru: <strong id="mcCorrectScore">0</strong></span>
                         <span style="color: var(--rose-accent);">❌ Yanlış: <strong id="mcWrongScore">0</strong></span>
@@ -13336,6 +13195,18 @@ class MultipleChoiceMode {
                 </div>
             </div>
         `;
+    }
+
+    jumpToQuestion() {
+        const inputEl = document.getElementById('mcJumpInput');
+        if (!inputEl) return;
+        const targetNum = parseInt(inputEl.value, 10);
+        if (targetNum >= 1 && targetNum <= this.cards.length) {
+            this.currentIndex = targetNum - 1;
+            this.loadNextQuestion();
+        } else {
+            alert(`Lütfen 1 ile ${this.cards.length} arasında geçerli bir soru numarası girin.`);
+        }
     }
 
     loadNextQuestion() {
